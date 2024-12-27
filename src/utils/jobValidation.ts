@@ -42,40 +42,32 @@ export interface ValidationResult {
 const calculateContentScore = (text: string): number => {
   const words = text.toLowerCase().split(/\s+/);
   const uniqueWords = new Set(words);
-  
-  // Check for job-related keywords
-  const jobKeywordCount = JOB_RELATED_KEYWORDS.filter(keyword => 
-    text.toLowerCase().includes(keyword)
-  ).length;
 
-  // Check for technical keywords in description
-  const techKeywordCount = TECH_KEYWORDS.filter(keyword => 
-    text.toLowerCase().includes(keyword)
-  ).length;
+  const jobKeywordCount = countKeywords(text, JOB_RELATED_KEYWORDS);
+  const techKeywordCount = countKeywords(text, TECH_KEYWORDS);
 
-  // Basic scoring system
   let score = 0;
-  score += uniqueWords.size / words.length * 50; // Vocabulary diversity
+  score += (uniqueWords.size / words.length) * 50; // Vocabulary diversity
   score += jobKeywordCount * 5; // Job context relevance
   score += techKeywordCount * 5; // Technical relevance
   score = Math.min(100, score); // Cap at 100
 
   return score;
-}
+};
+
+const countKeywords = (text: string, keywords: string[]): number => {
+  return keywords.filter(keyword => text.toLowerCase().includes(keyword)).length;
+};
 
 const checkForSpamPatterns = (text: string): boolean => {
   const words = text.toLowerCase().split(/\s+/);
-  
-  // Check for excessive repetition
   const wordFrequency: Record<string, number> = {};
+
   words.forEach(word => {
     wordFrequency[word] = (wordFrequency[word] || 0) + 1;
   });
 
-  // If any word appears more than 30% of the time, it's likely spam
-  return Object.values(wordFrequency).some(count => 
-    count > words.length * 0.3
-  );
+  return Object.values(wordFrequency).some(count => count > words.length * 0.3); // Check for excessive repetition
 };
 
 export const validateJobPost = (formData: JobFormData): ValidationResult => {
