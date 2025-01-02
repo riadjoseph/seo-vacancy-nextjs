@@ -3,7 +3,6 @@ import type { LoaderFunctionArgs } from "react-router-dom";
 import App from '@/App';
 import Index from '@/pages/Index';
 import Login from '@/pages/Login';
-import PostJob from '@/pages/PostJob';
 import JobDetails from '@/pages/JobDetails';
 import Bookmarks from '@/pages/Bookmarks';
 import CityJobs from '@/pages/CityJobs';
@@ -109,7 +108,7 @@ const tagJobsLoader = async ({ params }: LoaderFunctionArgs) => {
 };
 
 const myJobsLoader = async () => {
-  const session = await requireAuth(); // Ensure the user is logged in
+  const session = await requireAuth();
   const { user } = session;
 
   const { data: jobs } = await supabase
@@ -119,11 +118,6 @@ const myJobsLoader = async () => {
     .order("created_at", { ascending: false });
 
   return { jobs };
-};
-
-const postJobLoader = async () => {
-  await requireAuth(); // Redirects if not authenticated
-  return null;
 };
 
 export const routes = [
@@ -140,18 +134,6 @@ export const routes = [
       {
         path: "login",
         element: <Login />,
-      },
-      {
-        path: "post-job",
-        element: <PostJob />,
-        loader: postJobLoader,
-        errorElement: <NotFoundBoundary />,
-      },
-      {
-        path: "edit-job/:jobId",
-        element: <PostJob />,
-        loader: postJobLoader,
-        errorElement: <NotFoundBoundary />,
       },
       {
         path: "my-jobs",

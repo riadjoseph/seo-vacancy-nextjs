@@ -1,4 +1,5 @@
-import { useLoaderData, Link } from "react-router-dom";
+import { useState } from "react";
+import { useLoaderData } from "react-router-dom";
 import { Job } from "@/data/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -6,10 +7,13 @@ import { format } from "date-fns";
 import { Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import JobPostingForm from "./PostJob";
 
 export default function MyJobs() {
   const { jobs } = useLoaderData() as { jobs: Job[] };
   const { toast } = useToast();
+  const [showPostJobForm, setShowPostJobForm] = useState(false);
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
 
   const handleDelete = async (jobId: string) => {
     if (!window.confirm("Are you sure you want to delete this job posting?")) {
@@ -41,22 +45,45 @@ export default function MyJobs() {
     }
   };
 
+  const handleEditJob = (job: Job) => {
+    setEditingJob(job);
+    setShowPostJobForm(true);
+  };
+
+  const handleFormClose = () => {
+    setShowPostJobForm(false);
+    setEditingJob(null);
+  };
+
+  const handleFormSuccess = () => {
+    setShowPostJobForm(false);
+    setEditingJob(null);
+    window.location.reload(); // Refresh to show updated data
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">My Job Postings</h1>
-        <Button asChild>
-          <Link to="/post-job">Post New Job</Link>
-        </Button>
+        <Button onClick={() => setShowPostJobForm(true)}>Post New Job</Button>
       </div>
 
-      {jobs?.length === 0 ? (
+      {showPostJobForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <JobPostingForm 
+              onClose={handleFormClose}
+              onSuccess={handleFormSuccess}
+              initialData={editingJob}
+            />
+          </div>
+        </div>
+      )}
+
+      {jobs?.length === 0 && !showPostJobForm ? (
         <div className="text-center py-12">
           <h2 className="text-xl font-semibold mb-4">No jobs posted yet</h2>
-          <p className="text-gray-600 mb-6">Start by posting your first job listing</p>
-          <Button asChild>
-            <Link to="/post-job">Post a Job</Link>
-          </Button>
+          <p className="text-gray-600">Start by posting your first job listing</p>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -75,11 +102,12 @@ export default function MyJobs() {
                 </p>
               </CardContent>
               <CardFooter className="flex justify-between mt-auto">
-                <Button variant="outline" asChild>
-                  <Link to={`/edit-job/${job.id}`}>
-                    <Pencil className="w-4 h-4 mr-2" />
-                    Edit
-                  </Link>
+                <Button 
+                  variant="outline" 
+                  onClick={() => handleEditJob(job)}
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit
                 </Button>
                 <Button 
                   variant="destructive" 

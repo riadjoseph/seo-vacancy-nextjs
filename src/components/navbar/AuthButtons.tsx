@@ -27,7 +27,6 @@ const AuthButtons = ({ user }: AuthButtonsProps) => {
   if (user) {
     return (
       <div className="flex items-center gap-4">
-        <Button onClick={handlePostJob}>Post a Job</Button>
         <Button variant="outline" onClick={handleLogout}>
           Logout
         </Button>

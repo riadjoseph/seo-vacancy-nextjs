@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { validateJobPost } from "@/utils/jobValidation";
 import type { SeoSpecialization } from "@/data/types";
@@ -38,58 +37,79 @@ const initialFormData: JobFormData = {
   duration: "30",
   city: "",
   hide_salary: false,
-  featured: false
+  featured: false,
 };
 
-export const useJobForm = (jobId?: string) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
+export const useJobForm = (jobId?: string, initialData?: Partial<JobFormData>) => {
+  const { toast, dismiss } = useToast();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [formData, setFormData] = useState<JobFormData>(initialFormData);
+  const [formData, setFormData] = useState<JobFormData>({
+    ...initialFormData,
+    ...initialData,
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<boolean> => {
     e.preventDefault();
     setLoading(true);
     setErrors({});
 
     const validation = validateJobPost(formData);
-    
+
     if (!validation.isValid) {
       setErrors(validation.errors);
       setLoading(false);
       toast({
         title: "Validation Error",
-        description: `Please improve your job posting quality (Current score: ${Math.round(validation.score)}%). Ensure all fields are filled with meaningful content.`,
+        description: `Please improve your job posting quality (Current score: ${Math.round(
+          validation.score
+        )}%). Ensure all fields are filled with meaningful content.`,
         variant: "destructive",
         duration: 5000,
       });
-      return;
+      return false;
     }
 
     try {
-      await submitJob(formData, jobId);
-      
+      const { jobId: newJobId, slug } = await submitJob(formData, jobId);
+
       toast({
         title: "Success",
-        description: `Job successfully ${jobId ? 'updated' : 'posted'}`,
+        description: (
+          <>
+            Job successfully {jobId ? "updated" : "posted"}.{" "}
+            <a href={`/job/${slug}`} className="text-blue-500 underline">
+              View Job Details
+            </a>
+          </>
+        ),
+        duration: Infinity, // Keeps the success message on screen until closed
+        action: (
+          <button
+            onClick={() => dismiss()}
+            className="text-blue-500 underline"
+          >
+            Close
+          </button>
+        ),
       });
-      
-      navigate('/my-jobs');
+
+      return true;
     } catch (error) {
       console.error("Error in job submission:", error);
       toast({
         title: "Error",
-        description: `Failed to ${jobId ? 'update' : 'post'} job. Please try again.`,
+        description: `Failed to ${jobId ? "update" : "post"} job. Please try again.`,
         variant: "destructive",
       });
+      return false;
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async () => {
-    if (!jobId || !window.confirm('Are you sure you want to delete this job post?')) return;
+  const handleDelete = async (): Promise<boolean> => {
+    if (!jobId || !window.confirm("Are you sure you want to delete this job post?")) return false;
 
     setLoading(true);
     try {
@@ -97,8 +117,9 @@ export const useJobForm = (jobId?: string) => {
       toast({
         title: "Success",
         description: "Job post deleted successfully",
+        duration: 5000,
       });
-      navigate('/my-jobs');
+      return true;
     } catch (error) {
       console.error("Error deleting job:", error);
       toast({
@@ -106,6 +127,7 @@ export const useJobForm = (jobId?: string) => {
         description: "Failed to delete job post",
         variant: "destructive",
       });
+      return false;
     } finally {
       setLoading(false);
     }
@@ -117,6 +139,6 @@ export const useJobForm = (jobId?: string) => {
     loading,
     handleSubmit,
     handleDelete,
-    errors
+    errors,
   };
 };
