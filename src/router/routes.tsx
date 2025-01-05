@@ -11,6 +11,9 @@ import MyJobs from '@/pages/MyJobs';
 import NotFoundBoundary from '@/components/error-boundaries/NotFoundBoundary';
 import JobErrorBoundary from '@/components/error-boundaries/JobErrorBoundary';
 import { supabase } from "@/integrations/supabase/client";
+import ResetPassword from '@/pages/ResetPassword';
+import UpdatePassword from '@/pages/UpdatePassword';
+import MagicLink from '@/pages/MagicLink';
 
 // Helper functions
 const containsSpaces = (str: string) => /\s|%20/.test(str);
@@ -163,6 +166,21 @@ export const routes = [
         loader: tagJobsLoader,
         errorElement: <NotFoundBoundary />,
       },
+      {
+        path: "/reset-password",
+        element: <ResetPassword />,
+        errorElement: <NotFoundBoundary />
+      },
+      {
+        path: "/update-password",
+        element: <UpdatePassword />,
+        errorElement: <NotFoundBoundary />
+      },
+      {
+        path: "/magic-link",
+        element: <MagicLink />,
+        errorElement: <NotFoundBoundary />
+      }
     ],
   },
   {

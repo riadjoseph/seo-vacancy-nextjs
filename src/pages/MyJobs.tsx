@@ -102,13 +102,13 @@ export default function MyJobs() {
                 </p>
               </CardContent>
               <CardFooter className="flex justify-between mt-auto">
-                <Button 
+                {/* <Button 
                   variant="outline" 
                   onClick={() => handleEditJob(job)}
                 >
                   <Pencil className="w-4 h-4 mr-2" />
                   Edit
-                </Button>
+                </Button> */}
                 <Button 
                   variant="destructive" 
                   onClick={() => handleDelete(job.id)}
