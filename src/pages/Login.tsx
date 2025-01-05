@@ -24,11 +24,12 @@ const Login = () => {
   return (
     <div className="container max-w-md py-8">
       <Card className="p-8">
-        <h1 className="text-2xl font-bold mb-6">Login to Add or Remove Job Listings</h1>
+        <h1 className="text-2xl font-bold mb-6">Login with Google or LinkedIn</h1>
+        <p className="text-xl mb-3">Login to Add or Remove Job Listings</p>
         <Auth
           supabaseClient={supabase}
           appearance={{ theme: ThemeSupa }}
-          providers={['google']} // Enable Google login
+          providers={['google', 'linkedin_oidc']} // Enable Google & linkedin login
           view="magic_link" // Show magic link by default
           redirectTo={`${window.location.origin}/my-jobs`}
         />

@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import ResetPassword from '@/pages/ResetPassword';
 import UpdatePassword from '@/pages/UpdatePassword';
 import MagicLink from '@/pages/MagicLink';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
 
 // Helper functions
 const containsSpaces = (str: string) => /\s|%20/.test(str);
@@ -180,7 +181,11 @@ export const routes = [
         path: "/magic-link",
         element: <MagicLink />,
         errorElement: <NotFoundBoundary />
-      }
+      },
+      {
+        path: "/privacy-policy",
+        element: <PrivacyPolicy />,
+      },
     ],
   },
   {
