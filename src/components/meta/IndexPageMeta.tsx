@@ -5,8 +5,14 @@ const IndexPageMeta = () => {
   const [searchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   
-  const pageTitle = "SEO Job Board - Find Your Next SEO Career Opportunity";
-  const pageDescription = "Browse the latest SEO job opportunities across Europe. Remote positions, in-house roles, and agency vacancies for SEO professionals.";
+  const pageTitle = currentPage === 1
+    ? "SEO Job Board - Find Your Next SEO Career Opportunity"
+    : `SEO Job Board - Find Your Next SEO Career Opportunity - Page ${currentPage}`;
+    
+  const pageDescription = currentPage === 1
+    ? "Browse the latest SEO job opportunities across Europe. Remote positions, in-house roles, and agency vacancies for SEO professionals."
+    : `Browse the latest SEO job opportunities across Europe - Page ${currentPage}. Remote positions, in-house roles, and agency vacancies for SEO professionals.`;
+    
   const currentUrl = currentPage === 1 
     ? `${window.location.origin}/` 
     : `${window.location.origin}/?page=${currentPage}`;
@@ -19,7 +25,6 @@ const IndexPageMeta = () => {
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={pageDescription} />
       <meta property="og:url" content={currentUrl} />
-      {currentPage > 1 && <meta name="robots" content="noindex" />}
     </Helmet>
   );
 };

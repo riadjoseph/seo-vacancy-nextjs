@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import SecondaryMenu from "@/components/SecondaryMenu";
@@ -13,6 +13,7 @@ import Pagination from "@/components/Pagination";
 import { useSearchParams } from "react-router-dom";
 import type { Job } from "@/data/types";
 import JobCard from "@/components/JobCard";
+import { sortJobs } from "@/utils/jobSorting";
 
 const JOBS_PER_PAGE = 7;
 
@@ -40,7 +41,7 @@ const Index = () => {
 
   const normalizeText = (text: string) => text.toLowerCase().trim();
 
-  const filteredJobs = jobs
+  const filteredJobs = sortJobs(jobs
     .map(job => ({
       ...job,
       category: job.category || getRandomCategory()
@@ -76,7 +77,14 @@ const Index = () => {
       }
 
       return true;
-    });
+    }));
+
+  // Reset to base URL when filters change
+  useEffect(() => {
+    if (currentPage !== 1) {
+      setSearchParams({});  // Remove all params to get back to base URL
+    }
+  }, [searchQuery, selectedCategory, selectedCity]);
 
   const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE);
   const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
@@ -87,6 +95,19 @@ const Index = () => {
 
   const createPageUrl = (page: number) => {
     return page === 1 ? "/" : `/?page=${page}`;
+  };
+
+  const getJobsHeading = () => {
+    if (selectedCategory && selectedCity) {
+      return `All ${selectedCategory} Jobs in ${selectedCity}`;
+    }
+    if (selectedCategory) {
+      return `All ${selectedCategory} Jobs`;
+    }
+    if (selectedCity) {
+      return `All Jobs in ${selectedCity}`;
+    }
+    return "All Jobs";
   };
 
   if (isLoading) {
@@ -154,7 +175,7 @@ const Index = () => {
             </>
           )}
           
-          <h2 className="text-2xl font-semibold mb-6">All Jobs</h2>
+          <h2 className="text-2xl font-semibold mb-6">{getJobsHeading()}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {regularJobs.map((job) => (
               <JobCard key={job.id} job={job} />

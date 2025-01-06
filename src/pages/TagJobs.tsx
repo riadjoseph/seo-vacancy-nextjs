@@ -4,6 +4,7 @@ import JobCard from "@/components/JobCard";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Pagination from "@/components/Pagination";
 import type { Job } from "@/data/types";
+import { sortJobs } from "@/utils/jobSorting";
 
 const JOBS_PER_PAGE = 7;
 const origin = window.location.origin;
@@ -33,9 +34,10 @@ const TagJobs = () => {
   const canonicalUrl = `${window.location.origin}/jobs/tag/${decodedTag.replace(/\s+/g, '-').toLowerCase()}${currentPage > 1 ? `?page=${currentPage}` : ''}`;
 
   // Pagination logic
-  const totalPages = Math.ceil(jobs.length / JOBS_PER_PAGE);
+  const sortedJobs = sortJobs(jobs);
+  const totalPages = Math.ceil(sortedJobs.length / JOBS_PER_PAGE);
   const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
-  const paginatedJobs = jobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
+  const paginatedJobs = sortedJobs.slice(startIndex, startIndex + JOBS_PER_PAGE);
 
   return (
     <div className="container py-8">

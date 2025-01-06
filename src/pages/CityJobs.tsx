@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet";
 import JobCard from "@/components/JobCard";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import type { Job } from "@/data/types";
+import { sortJobs } from "@/utils/jobSorting";
 
 const CityJobs = () => {
   const { city } = useParams();
@@ -52,7 +53,7 @@ const CityJobs = () => {
       
       {jobs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {jobs.map((job) => (
+          {sortJobs(jobs).map((job) => (
             <JobCard key={job.id} job={job} />
           ))}
         </div>

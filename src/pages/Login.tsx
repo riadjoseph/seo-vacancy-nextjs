@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { Linkedin } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const Login = () => {
     <div className="container max-w-md py-8">
       <Card className="p-8">
         <h1 className="text-2xl font-bold mb-6">Login with Google or LinkedIn</h1>
-        <p className="text-xl mb-3">Login to Add or Remove Job Listings</p>
+        <p className="text-l mb-3">Login to add or remove Job Listings</p>
         <Auth
           supabaseClient={supabase}
           appearance={{ theme: ThemeSupa }}
