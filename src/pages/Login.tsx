@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { Linkedin } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
