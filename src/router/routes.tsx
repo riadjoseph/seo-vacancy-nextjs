@@ -15,7 +15,6 @@ import ResetPassword from '@/pages/ResetPassword';
 import UpdatePassword from '@/pages/UpdatePassword';
 import MagicLink from '@/pages/MagicLink';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
-import NotFound from "@/pages/NotFound";
 
 // Helper functions
 const containsSpaces = (str: string) => /\s|%20/.test(str);
@@ -191,6 +190,6 @@ export const routes = [
   },
   {
     path: "*",
-    element: <NotFound />,
+    element: <NotFoundBoundary />,
   },
 ];
