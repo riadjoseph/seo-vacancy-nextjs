@@ -3,17 +3,18 @@ import { useRouteError } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 const NotFoundBoundary = () => {
-  const error = useRouteError();
-  
   useEffect(() => {
-    // Set the status code at the document level
-    document.documentElement.dataset.status = "404";
+    // Set response code for Netlify
+    const meta = document.createElement('meta');
+    meta.name = 'Response-Code';
+    meta.content = '404';
+    document.head.appendChild(meta);
     
-    // Create and dispatch a custom event to set the HTTP status code
-    const statusEvent = new CustomEvent('httpStatus', { detail: 404 });
-    window.dispatchEvent(statusEvent);
+    return () => {
+      document.head.removeChild(meta);
+    };
   }, []);
-  
+
   return (
     <>
       <Helmet>
