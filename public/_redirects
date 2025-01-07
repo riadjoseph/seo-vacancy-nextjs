@@ -1,0 +1,9 @@
+# Serve assets with proper MIME types
+/assets/*.js   /assets/:splat   200!   Content-Type=application/javascript
+/assets/*.css  /assets/:splat   200!   Content-Type=text/css
+
+# Handle 404s
+/*  /404.html  404
+
+# Handle SPA routes
+/*  /index.html  200 
