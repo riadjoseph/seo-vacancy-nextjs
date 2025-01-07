@@ -19,17 +19,17 @@
   [headers.values]
     Content-Type = "text/css"
 
-# Handle 404s first
+# Handle SPA routes first
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = true
+
+# Then handle 404s
 [[redirects]]
   from = "/*"
   to = "/404.html"
   status = 404
   force = true
   conditions = {Response-Code = ["404"]}
-
-# Then handle all other routes as SPA
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = true
