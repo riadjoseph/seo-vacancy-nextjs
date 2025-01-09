@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useState } from "react";
 
 interface JobBasicInfoProps {
   formData: {
@@ -24,21 +25,33 @@ interface JobBasicInfoProps {
 
 export const CITIES_BY_COUNTRY = {
   Remote: ['Remote'],
-  France: ['Paris', 'Marseille', 'Lyon', 'Toulouse', 'Nice', 'Nantes', 'Strasbourg', 'Montpellier', 'Bordeaux', 'Lille'],
-  Spain: ['Madrid', 'Barcelona', 'Valencia', 'Seville', 'Zaragoza', 'Málaga', 'Bilbao', 'Alicante', 'Granada', 'Palma'],
-  Germany: ['Berlin', 'Hamburg', 'Munich', 'Cologne', 'Frankfurt', 'Stuttgart', 'Düsseldorf', 'Leipzig', 'Dortmund', 'Essen'],
-  Italy: ['Rome', 'Milan', 'Naples', 'Turin', 'Palermo', 'Genoa', 'Bologna', 'Florence', 'Bari', 'Venice'],
-  Belgium: ['Brussels', 'Antwerp', 'Ghent', 'Bruges', 'Liège'],
-  Switzerland: ['Zurich', 'Geneva', 'Basel', 'Lausanne', 'Bern'],
-  Netherlands: ['Amsterdam', 'Rotterdam', 'The Hague', 'Utrecht', 'Eindhoven'],
-  Denmark: ['Copenhagen', 'Aarhus', 'Odense', 'Aalborg', 'Esbjerg'],
-  Sweden: ['Stockholm', 'Gothenburg', 'Malmö', 'Uppsala', 'Västerås'],
-  Norway: ['Oslo', 'Bergen', 'Trondheim', 'Stavanger', 'Tromsø'],
-  Finland: ['Helsinki', 'Espoo', 'Tampere', 'Vantaa', 'Oulu'],
+  France: ['Rennes', 'Reims', 'Toulon', 'Angers', 'Dijon', 'Grenoble', 'Saint-Étienne', 'Clermont-Ferrand', 'Brest', 'Le Havre', 'Paris', 'Marseille', 'Lyon', 'Toulouse', 'Nice', 'Nantes', 'Strasbourg', 'Montpellier', 'Bordeaux', 'Lille'],
+  Spain: ['Córdoba', 'Valladolid', 'Vigo', 'Gijón', 'La Coruña', 'Santander', 'Pamplona', 'Cádiz', 'Salamanca', 'Almería', 'Madrid', 'Barcelona', 'Valencia', 'Seville', 'Zaragoza', 'Málaga', 'Bilbao', 'Alicante', 'Granada', 'Palma'],
+  Germany: ['Bremen', 'Hanover', 'Nuremberg', 'Dresden', 'Bochum', 'Wuppertal', 'Bielefeld', 'Bonn', 'Mannheim', 'Karlsruhe', 'Berlin', 'Hamburg', 'Munich', 'Cologne', 'Frankfurt', 'Stuttgart', 'Düsseldorf', 'Leipzig', 'Dortmund', 'Essen'],
+  Italy: ['Verona', 'Messina', 'Padua', 'Trieste', 'Taranto', 'Brescia', 'Prato', 'Parma', 'Modena', 'Reggio Calabria', 'Rome', 'Milan', 'Naples', 'Turin', 'Palermo', 'Genoa', 'Bologna', 'Florence', 'Bari', 'Venice'],
+  Belgium: ['Namur', 'Mons', 'Hasselt', 'Mechelen', 'Kortrijk', 'Tournai', 'Brussels', 'Leuven', 'Antwerp', 'Ghent', 'Bruges', 'Liège'],
+  Switzerland: ['Lugano', 'Winterthur', 'Lucerne', 'St. Gallen', 'Thun', 'Zurich', 'Geneva', 'Basel', 'Lausanne', 'Bern'],
+  Netherlands: ['Haarlem', 'Groningen', 'Nijmegen', 'Maastricht', 'Amersfoort', 'Amsterdam', 'Rotterdam', 'The Hague', 'Utrecht', 'Eindhoven'],
+  Denmark: ['Randers', 'Kolding', 'Horsens', 'Vejle', 'Roskilde', 'Copenhagen', 'Aarhus', 'Odense', 'Aalborg', 'Esbjerg'],
+  Sweden: ['Linköping', 'Örebro', 'Helsingborg', 'Jönköping', 'Norrköping', 'Stockholm', 'Gothenburg', 'Malmö', 'Uppsala', 'Västerås'],
+  Norway: ['Kristiansand', 'Drammen', 'Fredrikstad', 'Ålesund', 'Bodø', 'Oslo', 'Bergen', 'Trondheim', 'Stavanger', 'Tromsø'],
+  Finland: ['Jyväskylä', 'Kuopio', 'Lahti', 'Pori', 'Lappeenranta', 'Helsinki', 'Espoo', 'Tampere', 'Vantaa', 'Oulu']
 } as const;
 
 const JobBasicInfo = ({ formData, handleChange, handleCityChange, errors = {} }: JobBasicInfoProps) => {
+  const [searchTerm, setSearchTerm] = useState("");
   const availableCountries = Object.keys(CITIES_BY_COUNTRY).filter(country => country !== 'Remote');
+
+  // Filter cities based on search term
+  const filteredCities = Object.entries(CITIES_BY_COUNTRY).reduce((acc, [country, cities]) => {
+    const matchedCities = cities.filter(city => 
+      city.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    if (matchedCities.length > 0) {
+      acc[country] = matchedCities;
+    }
+    return acc;
+  }, {} as typeof CITIES_BY_COUNTRY);
 
   return (
     <>
@@ -86,8 +99,9 @@ const JobBasicInfo = ({ formData, handleChange, handleCityChange, errors = {} }:
 
       <div>
         <Label className="block text-sm font-medium mb-2">Location</Label>
-        <p className="text-sm text-gray-500 mb-2">Choose the city closest to the job location or select if Remote.</p>
+        <p className="text-sm text-gray-500 mb-2">Choose the city closest to the job location or select Remote when applicable.</p>
         <p className="text-sm text-gray-500 mb-2">Available countries: {availableCountries.join(', ')}.</p>
+        
         <Select
           required
           value={formData.city}
@@ -97,7 +111,15 @@ const JobBasicInfo = ({ formData, handleChange, handleCityChange, errors = {} }:
             <SelectValue placeholder="Select a location" />
           </SelectTrigger>
           <SelectContent>
-            {Object.entries(CITIES_BY_COUNTRY).map(([country, cities]) => (
+            <div className="px-3 py-2 border-b">
+              <Input
+                placeholder="Search cities..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full"
+              />
+            </div>
+            {Object.entries(filteredCities).map(([country, cities]) => (
               <SelectGroup key={country}>
                 <SelectLabel>{country}</SelectLabel>
                 {cities.map((city) => (
@@ -107,8 +129,14 @@ const JobBasicInfo = ({ formData, handleChange, handleCityChange, errors = {} }:
                 ))}
               </SelectGroup>
             ))}
+            {Object.keys(filteredCities).length === 0 && (
+              <div className="px-3 py-2 text-sm text-gray-500">
+                No cities found
+              </div>
+            )}
           </SelectContent>
         </Select>
+        
         {errors.city && (
           <p className="text-sm text-red-500 mt-1">{errors.city}</p>
         )}
