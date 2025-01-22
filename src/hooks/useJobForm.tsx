@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { validateJobPost } from "@/utils/jobValidation";
 import type { SeoSpecialization } from "@/data/types";
 import { submitJob, deleteJob } from "@/utils/jobSubmission";
+import { trackEvent } from '@/utils/analytics';
 
 interface JobFormData {
   title: string;
@@ -49,7 +50,7 @@ export const useJobForm = (jobId?: string, initialData?: Partial<JobFormData>) =
     ...initialData,
   });
 
-  const handleSubmit = async (e: React.FormEvent): Promise<boolean> => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<boolean> => {
     e.preventDefault();
     setLoading(true);
     setErrors({});
@@ -71,14 +72,18 @@ export const useJobForm = (jobId?: string, initialData?: Partial<JobFormData>) =
     }
 
     try {
-      const { jobId: newJobId, slug } = await submitJob(formData, jobId);
-
+      const result = await submitJob(formData, jobId);
+      trackEvent('job_posted', {
+        job_title: formData.title,
+        company: formData.company_name,
+        category: formData.category,
+      });
       toast({
         title: "Success",
         description: (
           <>
             Job successfully {jobId ? "updated" : "posted"}.{" "}
-            <a href={`/job/${slug}`} className="text-blue-500 underline">
+            <a href={`/job/${result.slug}`} className="text-blue-500 underline">
               View Job Details
             </a>
           </>
@@ -93,9 +98,11 @@ export const useJobForm = (jobId?: string, initialData?: Partial<JobFormData>) =
           </button>
         ),
       });
-
       return true;
     } catch (error) {
+      trackEvent('job_post_error', {
+        error_message: error.message,
+      });
       console.error("Error in job submission:", error);
       toast({
         title: "Error",

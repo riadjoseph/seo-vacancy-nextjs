@@ -14,6 +14,7 @@ import { useSearchParams } from "react-router-dom";
 import type { Job } from "@/data/types";
 import JobCard from "@/components/JobCard";
 import { sortJobs } from "@/utils/jobSorting";
+import { trackEvent } from '@/utils/analytics';
 
 const JOBS_PER_PAGE = 7;
 
@@ -109,6 +110,49 @@ const Index = () => {
     }
     return "All Jobs";
   };
+
+  useEffect(() => {
+    let scrollTimeout: NodeJS.Timeout;
+    
+    const handleScroll = () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        const scrollPercent = 
+          (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+        
+        if (scrollPercent >= 25) {
+          trackEvent('scroll_depth', {
+            depth: '25%',
+            page: 'job_listings',
+          });
+        }
+        if (scrollPercent >= 50) {
+          trackEvent('scroll_depth', {
+            depth: '50%',
+            page: 'job_listings',
+          });
+        }
+        if (scrollPercent >= 75) {
+          trackEvent('scroll_depth', {
+            depth: '75%',
+            page: 'job_listings',
+          });
+        }
+        if (scrollPercent >= 90) {
+          trackEvent('scroll_depth', {
+            depth: '90%',
+            page: 'job_listings',
+          });
+        }
+      }, 500);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
+    };
+  }, []);
 
   if (isLoading) {
     return (

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import JobStructuredData from "./JobStructuredData";
 import JobSalaryInfo from "./JobSalaryInfo";
 import JobDatesInfo from "./JobDatesInfo";
+import { trackEvent } from '@/utils/analytics';
 
 interface JobDetailsProps {
   job: Job;
@@ -15,6 +16,14 @@ const JobDetails = ({ job }: JobDetailsProps) => {
   const handleTagClick = (tag: string) => {
     const urlTag = tag.replace(/\s+/g, '-').toLowerCase();
     return `/jobs/tag/${encodeURIComponent(urlTag)}`;
+  };
+
+  const handleApplyClick = () => {
+    trackEvent('job_apply_click', {
+      job_id: job.id,
+      job_title: job.title,
+      company: job.company_name,
+    });
   };
 
   return (
@@ -45,7 +54,12 @@ const JobDetails = ({ job }: JobDetailsProps) => {
       </div>
 
       <div className="mt-8">
-        <a href={job.job_url} target="_blank" rel="noopener noreferrer">
+        <a 
+          href={job.job_url} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          onClick={handleApplyClick}
+        >
           <Button className="w-full">Apply Now</Button>
         </a>
       </div>
