@@ -1,20 +1,9 @@
 import { SeoSpecialization } from "@/data/types";
 
 // Common keywords that should appear in job descriptions
-const JOB_RELATED_KEYWORDS = [
-  'experience', 'skills', 'requirements', 'responsibilities', 'team',
-  'project', 'development', 'work', 'position', 'role', 'qualification',
-  'background', 'knowledge', 'understanding', 'ability', 'years',
-  'environment', 'opportunity', 'company', 'client', 'solution',
-  'technology', 'software', 'application', 'system', 'platform'
-];
+// const JOB_RELATED_KEYWORDS = [ ... ];
 
-const TECH_KEYWORDS = [
-  'javascript', 'typescript', 'python', 'java', 'c++', 'ruby', 'php',
-  'react', 'angular', 'vue', 'node', 'express', 'django', 'flask',
-  'spring', 'aws', 'azure', 'gcp', 'docker', 'kubernetes', 'sql',
-  'mongodb', 'postgresql', 'mysql', 'redis', 'graphql', 'rest'
-];
+// const TECH_KEYWORDS = [ ... ];
 
 export interface JobFormData {
   title: string;
@@ -39,25 +28,9 @@ export interface ValidationResult {
   score: number;
 }
 
-const calculateContentScore = (text: string): number => {
-  const words = text.toLowerCase().split(/\s+/);
-  const uniqueWords = new Set(words);
+// const calculateContentScore = (text: string): number => { ... };
 
-  const jobKeywordCount = countKeywords(text, JOB_RELATED_KEYWORDS);
-  const techKeywordCount = countKeywords(text, TECH_KEYWORDS);
-
-  let score = 0;
-  score += (uniqueWords.size / words.length) * 50; // Vocabulary diversity
-  score += jobKeywordCount * 5; // Job context relevance
-  score += techKeywordCount * 5; // Technical relevance
-  score = Math.min(100, score); // Cap at 100
-
-  return score;
-};
-
-const countKeywords = (text: string, keywords: string[]): number => {
-  return keywords.filter(keyword => text.toLowerCase().includes(keyword)).length;
-};
+// const countKeywords = (text: string, keywords: string[]): number => { ... };
 
 const checkForSpamPatterns = (text: string): boolean => {
   const words = text.toLowerCase().split(/\s+/);
@@ -78,11 +51,11 @@ export const validateJobPost = (formData: JobFormData): ValidationResult => {
   if (!formData.title.trim()) {
     errors.title = "Job title is required";
   } else {
-    const titleScore = calculateContentScore(formData.title);
-    if (titleScore < 30) {
+    // const titleScore = calculateContentScore(formData.title);
+    if (formData.title.length < 3) {
       errors.title = "Please provide a more descriptive job title";
     }
-    score += titleScore * 0.2; // Title contributes 20% to total score
+    score += 20; // Placeholder for title score
   }
 
   // Description validation
@@ -100,11 +73,11 @@ export const validateJobPost = (formData: JobFormData): ValidationResult => {
       errors.description = "Please avoid repetitive content in the description";
     }
 
-    const descriptionScore = calculateContentScore(formData.description);
-    if (descriptionScore < 40) {
+    // const descriptionScore = calculateContentScore(formData.description);
+    if (formData.description.length < 100) {
       errors.description = "Please provide a more meaningful job description";
     }
-    score += descriptionScore * 0.5; // Description contributes 50% to total score
+    score += 50; // Placeholder for description score
   }
 
   // Tags validation
@@ -113,7 +86,7 @@ export const validateJobPost = (formData: JobFormData): ValidationResult => {
   } else if (formData.tags.length > 5) {
     errors.tags = "Please select no more than 5 SEO specializations";
   }
-  score += (formData.tags.length / 5) * 30; // Tags contribute 30% to total score
+  score += (formData.tags.length / 5) * 30; // Placeholder for tags score
 
   // URL validation
   try {
@@ -125,9 +98,34 @@ export const validateJobPost = (formData: JobFormData): ValidationResult => {
     errors.job_url = "Please provide a valid application URL";
   }
 
+  const isValid = Object.keys(errors).length === 0 && score >= 60; // Placeholder for total score
+
   return {
-    isValid: Object.keys(errors).length === 0 && score >= 60, // Require at least 60% quality score
+    isValid,
     errors,
     score
   };
+};
+
+export const validateJobDescription = (text: string, tags: string[]): { isValid: boolean; score: number } => {
+  let score = 0;
+  
+  // 1. Check minimum length
+  if (text.length >= 100) {
+    score += 20;
+  }
+  
+  // 2. Check if tags are provided and valid
+  if (tags && tags.length > 0) {
+    score += tags.length * 10; // Give points for each tag
+  }
+  
+  // 3. Check for basic formatting
+  if (text.includes('\n')) {
+    score += 10; // Reward structured content with line breaks
+  }
+  
+  const isValid = score >= 30; // Adjust threshold as needed
+  
+  return { isValid, score };
 };
