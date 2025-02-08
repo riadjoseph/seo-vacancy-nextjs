@@ -2,8 +2,8 @@
 /assets/*.js   /assets/:splat   200!   Content-Type=application/javascript
 /assets/*.css  /assets/:splat   200!   Content-Type=text/css
 
-# Handle SPA routes first with 200
-/*  /index.html  200
+# Handle 404s first
+/*  /404.html  404
 
-# Then handle actual 404s
-/404.html  /404.html  404 
+# Then handle SPA routes
+/*  /index.html  200
