@@ -36,7 +36,7 @@ const AuthButtons = ({ user }: AuthButtonsProps) => {
 
   return (
     <Button onClick={() => navigate('/login')} title="Login to post new job listings">
-      Login
+      Login to Post
     </Button>
   );
 };

@@ -4,9 +4,9 @@ import { Helmet } from "react-helmet";
 
 const NotFoundBoundary = () => {
   useEffect(() => {
-    // Set response code for Netlify
+    // Set status code for Netlify
     const meta = document.createElement('meta');
-    meta.name = 'Response-Code';
+    meta.name = 'netlify:status';
     meta.content = '404';
     document.head.appendChild(meta);
     
@@ -18,9 +18,8 @@ const NotFoundBoundary = () => {
   return (
     <>
       <Helmet>
-        <title>Not Found | Job Board</title>
-        <meta name="robots" content="noindex" />
-        <meta httpEquiv="Status" content="404" />
+        <title>Page Not Found | Job Board</title>
+        <meta name="netlify:status" content="404" />
       </Helmet>
       <div className="container mx-auto py-12 text-center">
         <h1 className="text-4xl font-bold mb-4">Page Not Found</h1>
