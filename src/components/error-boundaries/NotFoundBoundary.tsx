@@ -1,25 +1,17 @@
 import { useEffect } from "react";
-import { useRouteError } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 const NotFoundBoundary = () => {
   useEffect(() => {
     // Set status code for Netlify
-    const meta = document.createElement('meta');
-    meta.name = 'netlify:status';
-    meta.content = '404';
-    document.head.appendChild(meta);
-    
-    return () => {
-      document.head.removeChild(meta);
-    };
+    const statusEvent = new CustomEvent('httpStatus', { detail: 404 });
+    window.dispatchEvent(statusEvent);
   }, []);
 
   return (
     <>
       <Helmet>
         <title>Page Not Found | Job Board</title>
-        <meta name="netlify:status" content="404" />
       </Helmet>
       <div className="container mx-auto py-12 text-center">
         <h1 className="text-4xl font-bold mb-4">Page Not Found</h1>
