@@ -10,7 +10,7 @@ const NotFoundBoundary = () => {
     <>
       <Helmet>
         <title>404 - Page Not Found</title>
-        <meta httpEquiv="Status" content="404" />
+        <meta httpEquiv="status" content="404" />
       </Helmet>
       <div className="container mx-auto py-12 text-center">
         <h1 className="text-4xl font-bold mb-4">404 - Page Not Found</h1>
