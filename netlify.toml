@@ -2,15 +2,20 @@
   command = "npm run build"
   publish = "dist"
 
+# This is the default redirect for SPA (should come first)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
+# This redirect will handle 404 errors properly (should come after the default)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 404
+  force = true
+  # This condition ensures it only applies when the response indicates a 404
+  conditions = {Response = {status = [404]}}
 
 [[headers]]
   for = "/*"

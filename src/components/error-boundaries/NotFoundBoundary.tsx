@@ -18,9 +18,9 @@ const NotFoundBoundary = () => {
     // Set the status code at the document level
     document.documentElement.dataset.status = "404";
     
-    // Force header update
+    // Force header update for Netlify
     const headers = new Headers();
-    headers.set('data-status', '404');
+    headers.set('x-status', '404');
     
     // Create and dispatch a custom event to set the HTTP status code
     const statusEvent = new CustomEvent('httpStatus', { 
@@ -30,10 +30,22 @@ const NotFoundBoundary = () => {
     });
     window.dispatchEvent(statusEvent);
 
-    // For Netlify specifically
-    if (typeof window !== 'undefined' && window.netlifyIdentity) {
-      window.netlifyIdentity.on('error', err => console.error('Netlify Identity error:', err));
+    // Ensure Netlify sees this is a 404 page
+    if (typeof window !== 'undefined') {
+      // Add a meta tag that Netlify can use
+      const meta = document.createElement('meta');
+      meta.name = 'netlify:status';
+      meta.content = '404';
+      document.head.appendChild(meta);
+      
+      // Handle Netlify Identity if present
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on('error', err => console.error('Netlify Identity error:', err));
+      }
     }
+
+    // Log for debugging
+    console.log('404 NotFoundBoundary mounted, status set');
   }, []);
   
   return (
@@ -43,6 +55,7 @@ const NotFoundBoundary = () => {
         <meta name="robots" content="noindex" />
         <meta httpEquiv="Status" content="404" />
         <meta httpEquiv="status" content="404" />
+        <meta name="netlify:status" content="404" />
       </Helmet>
       <div className="container mx-auto py-12 text-center">
         <h1 className="text-4xl font-bold mb-4">Page Not Found</h1>
