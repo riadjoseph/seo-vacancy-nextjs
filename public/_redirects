@@ -1,9 +1,11 @@
 # Serve assets with proper MIME types
-/assets/*.js   /assets/:splat   200!   Content-Type=application/javascript
-/assets/*.css  /assets/:splat   200!   Content-Type=text/css
+# Removed as we let Netlify handle this part
+# /assets/*.js   /assets/:splat   200!   Content-Type=application/javascript
+# /assets/*.css  /assets/:splat   200!   Content-Type=text/css
 
-# Handle SPA routes first with 200
+# This rule tells Netlify to handle all routes that don't match static files or the other rules
+# by serving the SPA's index.html. This is where the client-side router takes over.
 /*  /index.html  200
 
-# Then handle actual 404s
-/404.html  /404.html  404 
+# This rule must be after the rule above. It will handle the non existant pages
+/* 404

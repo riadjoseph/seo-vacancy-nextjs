@@ -14,8 +14,7 @@ const JobFeatured = ({ formData, onFeaturedChange }: JobFeaturedProps) => {
       <div>
         <Label className="block text-sm font-medium mb-2">Make this job posting "Featured"</Label>
         <p className="text-sm text-gray-500 mb-4">
-          Featured jobs attract attention. Support this project with a small contribution to make your job featured. Buy me a coffee and I'll manually feature your job listing.
-        </p>
+        Support this platform whilst maximizing your job's visibility. 'Buy a Coffee' after posting and make your ad featured.      </p>
         <div className="flex items-center justify-center">
           <Script
             src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"

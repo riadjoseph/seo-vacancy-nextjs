@@ -10,7 +10,7 @@ const Footer = () => {
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <p className="text-sm text-gray-600">
-                WakeUpHappy is a job board dedicated to SEOs in Europe.
+                WakeUpHappy: A Job board for SEOs in Europe.
               </p>
             </div>
           </div>
@@ -19,7 +19,7 @@ const Footer = () => {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <p className="text-sm text-gray-600">
-                Hassle free vacancy posting for SEO jobs; no newsletter, no ads, and no noise. Support the project with "Buy a coffee" below, and I'll have your ad featured.
+                Hassle-free job posting; no newsletter, no ads, no noise. Support the project, post your jobs here. "Buy me coffee", get your ad featured.
               </p>
             </div>
           </div>
@@ -28,7 +28,7 @@ const Footer = () => {
             <div className="flex items-start gap-3">
               <Clock className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <p className="text-sm text-gray-600">
-                We quality check before the job goes live.
+                Cut the noise, see only the jobs you care about.
               </p>
             </div>
           </div>
