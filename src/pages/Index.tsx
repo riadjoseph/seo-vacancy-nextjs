@@ -5,7 +5,6 @@ import SecondaryMenu from "@/components/SecondaryMenu";
 import BrandingHeader from "@/components/BrandingHeader";
 import JobCardSkeleton from "@/components/JobCardSkeleton";
 import ErrorState from "@/components/ErrorState";
-import { categories } from "@/data/categories";
 import SearchSection from "@/components/search/SearchSection";
 import IndexPageMeta from "@/components/meta/IndexPageMeta";
 import Footer from "@/components/Footer";
@@ -22,7 +21,6 @@ const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const jobsRef = useRef<HTMLDivElement>(null);
 
@@ -35,23 +33,10 @@ const Index = () => {
     }
   });
 
-  const getRandomCategory = () => {
-    const randomIndex = Math.floor(Math.random() * categories.length);
-    return categories[randomIndex].name;
-  };
-
   const normalizeText = (text: string) => text.toLowerCase().trim();
 
   const filteredJobs = sortJobs(jobs
-    .map(job => ({
-      ...job,
-      category: job.category || getRandomCategory()
-    }))
     .filter((job) => {
-      if (selectedCategory && job.category !== selectedCategory) {
-        return false;
-      }
-
       if (selectedCity && job.city !== selectedCity) {
         return false;
       }
@@ -85,7 +70,7 @@ const Index = () => {
     if (currentPage !== 1) {
       setSearchParams({});  // Remove all params to get back to base URL
     }
-  }, [searchQuery, selectedCategory, selectedCity]);
+  }, [searchQuery, selectedCity]);
 
   const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE);
   const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
@@ -99,12 +84,6 @@ const Index = () => {
   };
 
   const getJobsHeading = () => {
-    if (selectedCategory && selectedCity) {
-      return `All ${selectedCategory} Jobs in ${selectedCity}`;
-    }
-    if (selectedCategory) {
-      return `All ${selectedCategory} Jobs`;
-    }
     if (selectedCity) {
       return `All Jobs in ${selectedCity}`;
     }
@@ -200,9 +179,7 @@ const Index = () => {
         />
 
         <SecondaryMenu
-          selectedCategory={selectedCategory}
           selectedCity={selectedCity}
-          onSelectCategory={setSelectedCategory}
           onSelectCity={setSelectedCity}
           jobs={jobs}
         />
