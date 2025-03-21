@@ -1,10 +1,9 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { componentTagger } from "lovable-tagger";
-import fs from 'fs';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { resolve } from 'path'
+import fs from 'fs'
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   server: {
     host: "::",
     port: 8080,
@@ -19,21 +18,36 @@ export default defineConfig(({ mode }) => ({
   base: "/",
   plugins: [
     react(),
-    mode === 'development' && componentTagger(),
     {
       name: 'generate-404',
-      closeBundle() {
-        // Copy index.html to 404.html in dist folder
-        fs.copyFileSync(
-          path.resolve(__dirname, 'dist/index.html'),
-          path.resolve(__dirname, 'dist/404.html')
-        );
+      closeBundle: async () => {
+        try {
+          const distDir = resolve(__dirname, 'dist')
+          const indexPath = resolve(distDir, 'index.html')
+          const notFoundPath = resolve(distDir, '404.html')
+
+          // Ensure dist directory exists
+          if (!fs.existsSync(distDir)) {
+            fs.mkdirSync(distDir, { recursive: true })
+          }
+
+          // Wait for index.html to be available
+          if (fs.existsSync(indexPath)) {
+            fs.copyFileSync(indexPath, notFoundPath)
+            console.log('Successfully created 404.html')
+          } else {
+            console.warn('index.html not found, skipping 404.html generation')
+          }
+        } catch (error) {
+          console.error('Error generating 404.html:', error)
+          // Don't fail the build for this error
+        }
       }
     }
-  ].filter(Boolean),
+  ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": resolve(__dirname, "./src"),
     },
   },
   build: {
@@ -43,4 +57,4 @@ export default defineConfig(({ mode }) => ({
       }
     }
   }
-}));
+})
