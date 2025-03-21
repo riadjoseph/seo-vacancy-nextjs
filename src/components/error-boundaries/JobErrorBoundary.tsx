@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useRouteError } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { supabase } from "@/integrations/supabase/client";
-import ExpiredJobPage from "@/components/job/ExpiredJobPage";
+import MarkdownDisplay from '@/MarkdownDisplay';
+import type { JobFormData } from "@/types/job";
 
 const JobErrorBoundary = () => {
   const error = useRouteError() as { status?: number };
@@ -35,7 +36,7 @@ const JobErrorBoundary = () => {
                 <meta name="robots" content="noindex" />
                 <meta httpEquiv="Status" content="410" />
               </Helmet>
-              <ExpiredJobPage job={data} />
+              <LocalExpiredJobPage job={data} />
             </>
           );
           return;
@@ -66,6 +67,16 @@ const JobErrorBoundary = () => {
   }
 
   return content;
+};
+
+const LocalExpiredJobPage = ({ job }: { job: JobFormData }) => {
+  return (
+    <div>
+      <div className="job-description">
+        <MarkdownDisplay markdown={job.description} />
+      </div>
+    </div>
+  );
 };
 
 export default JobErrorBoundary;

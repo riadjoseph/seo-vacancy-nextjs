@@ -6,13 +6,23 @@ interface JobStructuredDataProps {
   job: Job;
 }
 
+const stripMarkdown = (text: string) => {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+    .replace(/__(.*?)__/g, '$1') // Remove underline
+    .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Remove links
+    .replace(/#{1,6}\s/g, '') // Remove headers
+    .replace(/\n/g, ' ') // Replace newlines with spaces
+    .trim();
+};
+
 const JobStructuredData = ({ job }: JobStructuredDataProps) => {
   useEffect(() => {
     const jobPostingStructuredData = {
       "@context": "https://schema.org",
       "@type": "JobPosting",
       title: job.title,
-      description: job.description,
+      description: stripMarkdown(job.description),
       datePosted: job.posted_date,
       validThrough: job.expires_at,
       hiringOrganization: {

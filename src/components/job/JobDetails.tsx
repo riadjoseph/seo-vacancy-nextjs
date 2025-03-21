@@ -7,6 +7,7 @@ import JobStructuredData from "./JobStructuredData";
 import JobSalaryInfo from "./JobSalaryInfo";
 import JobDatesInfo from "./JobDatesInfo";
 import { trackEvent } from '@/utils/analytics';
+import MarkdownDisplay from '@/MarkdownDisplay';
 
 interface JobDetailsProps {
   job: Job;
@@ -50,7 +51,9 @@ const JobDetails = ({ job }: JobDetailsProps) => {
 
       <div className="prose max-w-none mt-8">
         <h2 className="text-xl font-semibold mb-4">Job Description</h2>
-        <p className="whitespace-pre-wrap">{job.description}</p>
+        <div className="job-description">
+          <MarkdownDisplay markdown={job.description} />
+        </div>
       </div>
 
       <div className="mt-8">
