@@ -1,4 +1,4 @@
-import { fontFamily } from "tailwindcss/defaultTheme";
+const defaultTheme = require('tailwindcss/defaultTheme')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -59,7 +59,7 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", ...fontFamily.sans],
+        sans: ['Inter', ...defaultTheme.fontFamily.sans],
       },
       keyframes: {
         "accordion-down": {
@@ -77,5 +77,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require('@tailwindcss/typography')], // Add the typography plugin here
 }
