@@ -1,6 +1,9 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import ReactMarkdown from 'react-markdown';
+import { useState } from 'react';
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { categories } from "@/data/categories";
 import { SEO_SPECIALIZATIONS, SeoSpecialization } from "@/data/types";
@@ -20,6 +23,8 @@ interface JobDescriptionProps {
 }
 
 const JobDescription = ({ formData, handleChange, onTagsChange, onCategoryChange, errors = {} }: JobDescriptionProps) => {
+  const [isPreview, setIsPreview] = useState(false);
+
   const handleTagSelect = (tag: SeoSpecialization) => {
     const newTags = formData.tags.includes(tag)
       ? formData.tags.filter(t => t !== tag)
@@ -33,22 +38,41 @@ const JobDescription = ({ formData, handleChange, onTagsChange, onCategoryChange
   return (
     <>
       <div>
-        <Label className="block text-sm font-medium mb-2">Description</Label>
-        <Textarea
-          required
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          rows={5}
-          className={errors.description ? "border-red-500" : ""}
-          placeholder="Describe the role, responsibilities, and requirements..."
-        />
+        <div className="flex justify-between items-center mb-2">
+          <Label className="text-sm font-medium">Description</Label>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setIsPreview(!isPreview)}
+          >
+            {isPreview ? 'Edit' : 'Preview'}
+          </Button>
+        </div>
+        
+        {isPreview ? (
+          <div className="prose prose-sm max-w-none border rounded-md p-4 min-h-[150px]">
+            <ReactMarkdown>{formData.description}</ReactMarkdown>
+          </div>
+        ) : (
+          <Textarea
+            required
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            rows={5}
+            className={errors.description ? "border-red-500" : ""}
+            placeholder="Describe the role, responsibilities, and requirements... (Markdown supported)"
+          />
+        )}
+        
         <div className="mt-1.5 space-y-1">
           <p className="text-sm text-muted-foreground">
             Requirements for a quality job description:
           </p>
           <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
             <li>Minimum {minWords} words ({wordCount} current)</li>
+            <li>Supports Markdown formatting (**, __, #, etc.)</li>
             <li>Include clear responsibilities and requirements</li>
             <li>Mention required years of experience</li>
             <li>List essential skills and qualifications</li>
