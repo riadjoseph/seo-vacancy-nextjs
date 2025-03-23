@@ -1,4 +1,4 @@
-import { Info, CheckCircle, Clock } from "lucide-react";
+import { Info, CheckCircle, Clock, MessageSquare } from "lucide-react"; // Import MessageSquare for the WhatsApp icon
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -14,7 +14,7 @@ const Footer = () => {
               </p>
             </div>
           </div>
-          
+
           <div className="space-y-4">
             <div className="flex items-start gap-3">
               <CheckCircle className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
@@ -23,13 +23,24 @@ const Footer = () => {
               </p>
             </div>
           </div>
-          
+
           <div className="space-y-4">
             <div className="flex items-start gap-3">
               <Clock className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <p className="text-sm text-gray-600">
-                Cut the noise, see only the jobs you care about.
+                Cut through the noise, see only the jobs you care about.
               </p>
+            </div>
+            {/* Add the WhatsApp channel link here */}
+            <div className="flex items-start gap-3">
+              <MessageSquare className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+              <a
+                href="https://whatsapp.com/channel/0029Vb61lbaAjPXMK7XMne31"
+                target="_blank"
+                className="text-sm text-gray-600 hover:underline"
+              >
+                Get Notified via the WhatsApp Channel
+              </a>
             </div>
           </div>
         </div>
