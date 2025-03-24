@@ -4,34 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Redirecting...</title>
-  <meta name="robots" content="noindex, noarchive, nofollow">
-
   <script>
     (function() {
-      const targetBaseUrl = "https://www.linkedin.com"; // Easily configurable
+      const params = new URLSearchParams(window.location.search);
+      const encodedTargetUrl = params.get('url');
 
-      // Get current path, removing this redirect file from URL
-      const currentPath = window.location.pathname.replace('/redirect.html', '');
-
-      // Preserve query parameters
-      const queryParams = window.location.search;
-
-      // Assemble final URL
-      const finalUrl = targetBaseUrl + currentPath + queryParams;
-
-      // Optional: validate URL contains linkedin.com as safety
-      if (finalUrl.includes("linkedin.com")) {
-        window.location.replace(finalUrl); // instant redirection without delay
+      if (encodedTargetUrl && encodedTargetUrl.includes('linkedin.com')) {
+        window.location.replace(decodeURIComponent(encodedTargetUrl));
       } else {
-        document.body.innerHTML = '<p>Error: Invalid URL.</p>';
+        document.body.innerHTML = '<p>Error: Invalid or missing LinkedIn URL.</p>';
       }
     })();
   </script>
-
   <noscript>
     <meta http-equiv="refresh" content="0;url=https://www.linkedin.com">
   </noscript>
-
 </head>
 <body>
   <p>Redirecting to LinkedIn...</p>
