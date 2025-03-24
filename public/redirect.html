@@ -3,106 +3,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex">
   <title>Redirecting...</title>
+  <meta name="robots" content="noindex, noarchive, nofollow">
+
   <script>
-    // Check if the origin URL contains "linkedin.com"
-    const isLinkedIn = window.location.href.includes("linkedin.com");
+    (function() {
+      const targetBaseUrl = "https://www.linkedin.com"; // Easily configurable
 
-    if (isLinkedIn) {
-      // If the origin URL contains "linkedin.com", perform the redirection
-      const path = window.location.pathname.replace('/redirect.html', '');
-      const search = window.location.search;
-      window.location.href = "https://www.linkedin.com" + path + search;
-    } else {
-      // If the origin URL does not contain "linkedin.com", do nothing (continue to the original link)
-      console.log("Not a LinkedIn URL. No redirection performed.");
-    }
+      // Get current path, removing this redirect file from URL
+      const currentPath = window.location.pathname.replace('/redirect.html', '');
+
+      // Preserve query parameters
+      const queryParams = window.location.search;
+
+      // Assemble final URL
+      const finalUrl = targetBaseUrl + currentPath + queryParams;
+
+      // Optional: validate URL contains linkedin.com as safety
+      if (finalUrl.includes("linkedin.com")) {
+        window.location.replace(finalUrl); // instant redirection without delay
+      } else {
+        document.body.innerHTML = '<p>Error: Invalid URL.</p>';
+      }
+    })();
   </script>
+
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=https://www.linkedin.com">
+  </noscript>
+
 </head>
-<body class="">
-  <div id="root">
-    <div class="min-h-screen flex flex-col">
-      <!-- Navigation Menu -->
-      <nav class="fixed top-0 left-0 right-0 z-50 bg-background border-b transition-all duration-300 py-4">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-          <a class="font-bold transition-all duration-300 text-base" href="/">SEO Job Board</a>
-          <div class="flex items-center gap-4">
-            <button class="justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 flex items-center gap-2" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-:r0:" data-state="closed">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark h-5 w-5">
-                <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path>
-              </svg>
-              <span class="hidden sm:inline">My Bookmarks</span>
-            </button>
-            <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2" title="Login to post new job listings">Login to Post</button>
-          </div>
-        </div>
-      </nav>
-
-      <!-- Main Content -->
-      <main class="pt-24 flex-grow">
-        <div class="container mx-auto py-12 text-center">
-          <h1 class="text-4xl font-bold mb-4">Redirecting...</h1>
-          <p class="text-gray-600 mb-8">You are being redirected to the job page.</p>
-          <noscript>
-            <p class="text-gray-600 mb-8">JavaScript is disabled. <a href="https://www.linkedin.com" class="text-blue-500 hover:underline">Click here</a> to continue.</p>
-          </noscript>
-        </div>
-      </main>
-
-      <!-- Footer -->
-      <footer class="mt-auto bg-gray-50 border-t">
-        <div class="container py-12">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="space-y-4">
-              <div class="flex items-start gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info w-5 h-5 text-primary mt-1 flex-shrink-0">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M12 16v-4"></path>
-                  <path d="M12 8h.01"></path>
-                </svg>
-                <p class="text-sm text-gray-600">WakeUpHappy: A Job board for SEOs in Europe.</p>
-              </div>
-            </div>
-            <div class="space-y-4">
-              <div class="flex items-start gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check-big w-5 h-5 text-primary mt-1 flex-shrink-0">
-                  <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
-                  <path d="m9 11 3 3L22 4"></path>
-                </svg>
-                <p class="text-sm text-gray-600">Hassle-free job posting; no newsletter, no ads, no noise. Support the project, post your jobs here. "Buy me coffee", get your ad featured.</p>
-              </div>
-            </div>
-            <div class="space-y-4">
-              <div class="flex items-start gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock w-5 h-5 text-primary mt-1 flex-shrink-0">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-                <p class="text-sm text-gray-600">Cut through the noise, see only the jobs you care about.</p>
-              </div>
-              <div class="flex items-start gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square w-5 h-5 text-primary mt-1 flex-shrink-0">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <a href="https://whatsapp.com/channel/0029Vb61lbaAjPXMK7XMne31" target="_blank" class="text-sm text-gray-600 hover:underline">Get Notified via the WhatsApp Channel</a>
-              </div>
-            </div>
-          </div>
-          <div class="mt-8 text-center">
-            <a class="text-primary hover:underline" href="/privacy-policy">Privacy Policy</a>
-          </div>
-        </div>
-      </footer>
-
-      <!-- Notifications Region -->
-      <div role="region" aria-label="Notifications (F8)" tabindex="-1" style="pointer-events: none;">
-        <ol tabindex="-1" class="fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]"></ol>
-      </div>
-    </div>
-  </div>
-
-  <!-- Buy Me a Coffee Widget -->
-  <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js" data-id="riadjoseph" data-description="Support me on Buy me a coffee!" data-message="" data-color="#5F7FFF" data-position="right" data-x_margin="18" data-y_margin="18"></script>
+<body>
+  <p>Redirecting to LinkedIn...</p>
+  <noscript>
+    <p>If redirection doesn't occur, <a href="https://www.linkedin.com">click here</a>.</p>
+  </noscript>
 </body>
 </html>
