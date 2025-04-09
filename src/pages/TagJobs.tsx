@@ -6,7 +6,7 @@ import Pagination from "@/components/Pagination";
 import type { Job } from "@/data/types";
 import { sortJobs } from "@/utils/jobSorting";
 
-const JOBS_PER_PAGE = 7;
+const JOBS_PER_PAGE = 25;
 const origin = window.location.origin;
 window.postMessage("message", origin);
 

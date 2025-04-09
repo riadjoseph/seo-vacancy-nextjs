@@ -15,7 +15,7 @@ import JobCard from "@/components/JobCard";
 import { sortJobs } from "@/utils/jobSorting";
 import { trackEvent } from '@/utils/analytics';
 
-const JOBS_PER_PAGE = 7;
+const JOBS_PER_PAGE = 25;
 
 const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
