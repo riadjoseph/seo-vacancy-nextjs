@@ -24,7 +24,7 @@ const Footer = () => {
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <p className="text-sm text-gray-600">
-              WakeUpHappy: Dedicated Jobboard for SEO Professionals in Europe
+              WakeUpHappy: Your Premier Job Board for SEO Professionals in Europe.
               </p>
             </div>
           </div>
@@ -33,7 +33,7 @@ const Footer = () => {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <p className="text-sm text-gray-600">
-              Seamless job posting without the clutter—no newsletters, no ads, just results. Support us by posting your jobs here. Contribute a small amount to get your ad featured!
+              Enjoy seamless job postings without the clutter—no newsletters, no ads, just results. Support our mission by posting your jobs here. Contribute a small amount to get your ad featured!
               </p>
             </div>
           </div>
@@ -53,23 +53,31 @@ const Footer = () => {
                 target="_blank"
                 className="text-sm text-gray-600 hover:underline"
               >
-                Stay Updated with Our WhatsApp Notifications - in progress.
+                Stay Updated with Our WhatsApp Notifications
               </a>
             </div>
           </div>
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Total Jobs Available</h3>
-            <p className="text-sm text-gray-600">{totalJobs} jobs listed</p>
+            <p className="text-sm text-gray-600">{totalJobs} jobs listed this week</p>
           </div>
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Top 10 Cities for SEO Jobs</h3>
-            <div className="flex flex-col">
+            <div className="flex flex-col space-y-2">
               {topCities.map((city, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="w-1/2">{city.name}</div>
-                  <div className="w-1/2 bg-gray-300 h-4" style={{ width: `${city.count * 5}px` }} />
+                <div key={index} className="flex flex-col">
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm font-medium text-gray-700">{city.name}</span>
+                    <span className="text-sm font-medium text-gray-700">{city.count}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div 
+                      className="bg-green-400 h-2.5 rounded-full" 
+                      style={{ width: `${(city.count / 20) * 100}%` }} 
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -77,11 +85,19 @@ const Footer = () => {
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Top 3 Tags</h3>
-            <div className="flex flex-col">
+            <div className="flex flex-col space-y-2">
               {topTags.map((tag, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="w-1/2">{tag.name}</div>
-                  <div className="w-1/2 bg-gray-300 h-4" style={{ width: `${tag.count * 0.5}px` }} />
+                <div key={index} className="flex flex-col">
+                  <div className="flex justify-between mb-1">
+                    <span className="text-sm font-medium text-gray-700">{tag.name}</span>
+                    <span className="text-sm font-medium text-gray-700">{tag.count}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div 
+                      className="bg-blue-400 h-2.5 rounded-full" 
+                      style={{ width: `${(tag.count / 110) * 100}%` }} 
+                    />
+                  </div>
                 </div>
               ))}
             </div>
