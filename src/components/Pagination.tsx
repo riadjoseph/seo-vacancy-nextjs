@@ -102,4 +102,4 @@ const Pagination = ({ currentPage, totalPages, createPageUrl }: PaginationProps)
   );
 };
 
-export default Pagination;
+export default Pagination; 

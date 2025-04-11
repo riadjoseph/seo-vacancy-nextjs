@@ -72,6 +72,28 @@ const JobDetails = ({ job }: JobDetailsProps) => {
       <JobDatesInfo job={job} />
       <JobSalaryInfo job={job} />
 
+      <div className="mt-8">
+        <a 
+          href={getFormattedJobUrl(job.job_url)} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          onClick={(e) => {
+            handleApplyClick();
+            if (!job.job_url.includes('linkedin.com')) return;
+            const formattedUrl = getFormattedJobUrl(job.job_url);
+            const fallbackUrl = job.job_url;
+            const isAndroid = /Android/.test(navigator.userAgent);
+            const delay = isAndroid ? 750 : 500;
+            window.location.href = formattedUrl;
+            setTimeout(() => {
+              window.location.href = fallbackUrl;
+            }, delay);
+            e.preventDefault();
+          }}
+        >
+          <Button className="w-full font-bold bg-[#1d49fb] hover:bg-[#1d49fb]/90">APPLY NOW</Button>
+        </a>
+      </div>
       <div className="prose max-w-none mt-8">
         <h2 className="text-xl font-semibold mb-4">Job Description</h2>
         <div className="job-description">
@@ -98,7 +120,7 @@ const JobDetails = ({ job }: JobDetailsProps) => {
             e.preventDefault();
           }}
         >
-          <Button className="w-full">APPLY NOW</Button>
+          <Button className="w-full font-bold bg-[#1d49fb] hover:bg-[#1d49fb]/90">APPLY NOW</Button>
         </a>
       </div>
     </div>

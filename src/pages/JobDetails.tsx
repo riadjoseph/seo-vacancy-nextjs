@@ -6,6 +6,8 @@ import JobDetails from "@/components/job/JobDetails";
 import CompanyInfo from "@/components/job/CompanyInfo";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import type { Job } from "@/data/types";
+import useScrollTop from "@/hooks/useScrollTop";
+import { useEffect } from "react";
 
 interface JobDetailsProps {
   job?: Job;
@@ -14,6 +16,14 @@ interface JobDetailsProps {
 
 const JobDetailsPage = () => {
   const { job } = useLoaderData() as JobDetailsProps;
+  
+  // Use the scroll top hook
+  useScrollTop();
+  
+  // Additional scroll-to-top effect when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   if (!job) {
     throw new Response("Not Found", { status: 404 });

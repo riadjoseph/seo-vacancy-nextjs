@@ -45,7 +45,20 @@ const Navbar = () => {
       <div className="container mx-auto px-2 sm:px-4 flex justify-between items-center">
         <Link to="/" className={`font-bold transition-all duration-300 ${
           scrolled ? 'text-sm' : 'text-base'
-        }`}>SEO Job Board</Link>
+        }`}>
+          <svg viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg" width="100" height="60">
+            <defs>
+              <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                <stop offset="100%" stopColor="#f9f9f9" stopOpacity="1" />
+              </linearGradient>
+            </defs>
+            <rect width="500" height="300" fill="url(#backgroundGradient)" />
+            <text x="250" y="130" fontFamily="'Twentieth Century', 'Avant Garde', 'ITC Avant Garde Gothic', 'Century Gothic', 'Futura', sans-serif" fontWeight="600" fontSize="52" textAnchor="middle" fill="#333333" letterSpacing="3">WAKE UP</text>
+            <text x="250" y="200" fontFamily="'Twentieth Century', 'Avant Garde', 'ITC Avant Garde Gothic', 'Century Gothic', 'Futura', sans-serif" fontWeight="600" fontSize="72" textAnchor="middle" fill="#333333" letterSpacing="4">HAPPY</text>
+            <line x1="150" y1="220" x2="350" y2="220" stroke="#333333" strokeWidth="1" opacity="0.5" />
+          </svg>
+        </Link>
         <div className="flex items-center gap-2 sm:gap-4">
           {user && (
             <Link to="/my-jobs" className="text-sm font-medium hover:text-primary whitespace-nowrap">

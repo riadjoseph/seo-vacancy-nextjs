@@ -38,6 +38,11 @@ const JobCard = ({ job, onTagClick }: JobCardProps) => {
     }
   };
 
+  const handleViewJob = () => {
+    // Scroll to top before navigating
+    window.scrollTo(0, 0);
+  };
+
   return (
     <Card 
       className={`p-6 hover:shadow-lg transition-all duration-300 ${
@@ -74,7 +79,6 @@ const JobCard = ({ job, onTagClick }: JobCardProps) => {
       </div>
 
       <div className="mt-4">
-
         <p className="text-gray-600 line-clamp-3">{job.description}</p>
       </div>
       
@@ -86,8 +90,10 @@ const JobCard = ({ job, onTagClick }: JobCardProps) => {
             Expired
           </Button>
         ) : (
-          <Link to={`/job/${jobSlug}`} className="w-full text-base">
-            <Button className="w-full">View {job.title}</Button>
+          <Link to={`/job/${jobSlug}`} className="w-full" onClick={handleViewJob}>
+            <Button className="w-full">
+              <span className="truncate block">View {job.title}</span>
+            </Button>
           </Link>
         )}
       </div>
