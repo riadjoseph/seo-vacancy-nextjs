@@ -8,12 +8,25 @@ import JobSalaryInfo from "./JobSalaryInfo";
 import JobDatesInfo from "./JobDatesInfo";
 import { trackEvent } from '@/utils/analytics';
 import MarkdownDisplay from '@/MarkdownDisplay';
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 interface JobDetailsProps {
   job: Job;
 }
 
 const JobDetails = ({ job }: JobDetailsProps) => {
+  const { jobId } = useParams(); // Assuming jobId is part of the URL
+  
+  useEffect(() => {
+    // Fetch job details based on jobId
+    fetchJobDetails(jobId);
+  }, [jobId]);
+
+  const fetchJobDetails = async (id) => {
+    // Logic to fetch job details from an API or state management
+  };
+
   const handleTagClick = (tag: string) => {
     const urlTag = tag.replace(/\s+/g, '-').toLowerCase();
     return `/jobs/tag/${encodeURIComponent(urlTag)}`;
@@ -30,21 +43,29 @@ const JobDetails = ({ job }: JobDetailsProps) => {
   const getFormattedJobUrl = (rawUrl: string) => {
     try {
       const parsed = new URL(rawUrl);
-      const isLinkedInDomain = parsed.hostname.endsWith('linkedin.com');
+      const isLinkedInDomain = parsed.hostname.endsWith("linkedin.com");
 
       if (isLinkedInDomain) {
-        const jobIdMatch = parsed.pathname.match(/\/jobs\/view\/([^\/\?]+)/);
+        // Normalize subdomain (e.g., es.linkedin.com → www.linkedin.com)
+        parsed.hostname = "www.linkedin.com";
+
+        // Remove query string and trailing slashes
+        parsed.search = "";
+        parsed.pathname = parsed.pathname.replace(/\/+$/, "");
+
+        // Extract numeric job ID from end of path
+        const jobIdMatch = parsed.pathname.match(/\/jobs\/view\/(?:.*-)?(\d+)$/);
         if (jobIdMatch && jobIdMatch[1]) {
           const jobId = jobIdMatch[1];
           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
           const isAndroid = /Android/.test(navigator.userAgent);
           const iosAppUrl = `linkedin://jobs/view/${jobId}`;
           const androidAppUrl = `linkedin://company-jobs/view?jobId=${jobId}`;
-          return isIOS ? iosAppUrl : (isAndroid ? androidAppUrl : rawUrl);
+          return isIOS ? iosAppUrl : (isAndroid ? androidAppUrl : parsed.toString());
         }
       }
 
-      return rawUrl;
+      return parsed.toString();
     } catch (err) {
       return rawUrl;
     }
