@@ -83,7 +83,12 @@ export default function MyJobs() {
       {jobs?.length === 0 && !showPostJobForm ? (
         <div className="text-center py-12">
           <h2 className="text-xl font-semibold mb-4">No jobs posted yet</h2>
-          <p className="text-gray-600">Start by posting your first job listing</p>
+          <p className="text-gray-600">Start by posting your first job listing. Here's what you need to prepare, apart from the obvious: </p>
+          <p className="text-gray-600"> - Company Logo URL </p>
+          <p className="text-gray-600"> - Min. 100 words description</p>
+          <p className="text-gray-600"> - Job URL, where candidates should send their application to</p>
+          <p className="text-gray-600"> - Specializations: think which SEO Speciality matters most to the job</p>
+          <p className="text-gray-600">Clock on Post New Job to see the full list. You can move away from the screen to copy / paste of course.</p>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
