@@ -60,25 +60,12 @@ export default defineConfig({
             'react-router-dom',
             '@tanstack/react-query'
           ],
-          ui: [
-            '@radix-ui/react-navigation-menu',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-slot',
-            'class-variance-authority',
-            'lucide-react'
-          ],
           supabase: [
             '@supabase/supabase-js'
           ]
-        },
-        // Optimize chunk size
-        chunkFileNames: 'assets/[name]-[hash].js',
-        entryFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]'
+        }
       }
     },
-    // Increase the warning limit to avoid unnecessary warnings
     chunkSizeWarningLimit: 800
   }
 })

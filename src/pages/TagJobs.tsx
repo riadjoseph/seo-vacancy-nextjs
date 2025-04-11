@@ -5,6 +5,7 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import Pagination from "@/components/Pagination";
 import type { Job } from "@/data/types";
 import { sortJobs } from "@/utils/jobSorting";
+import useScrollTop from "@/hooks/useScrollTop";
 
 const JOBS_PER_PAGE = 25;
 const origin = window.location.origin;
@@ -16,6 +17,9 @@ const TagJobs = () => {
   const decodedTag = tag ? decodeURIComponent(tag).replace(/-/g, ' ') : '';
   const [searchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  
+  // Use the scroll top hook
+  useScrollTop();
   
   // Get unique cities and sort by frequency
   const cityFrequency = jobs.reduce((acc: Record<string, number>, job) => {

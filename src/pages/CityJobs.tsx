@@ -4,10 +4,14 @@ import JobCard from "@/components/JobCard";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import type { Job } from "@/data/types";
 import { sortJobs } from "@/utils/jobSorting";
+import useScrollTop from "@/hooks/useScrollTop";
 
 const CityJobs = () => {
   const { city } = useParams();
   const { jobs = [] } = useLoaderData() as { jobs: Job[] };
+  
+  // Use the scroll top hook
+  useScrollTop();
   
   // Get the first job's city name for proper capitalization display
   const displayCity = jobs[0]?.city || decodeURIComponent(city || '');

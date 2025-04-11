@@ -14,6 +14,7 @@ import type { Job } from "@/data/types";
 import JobCard from "@/components/JobCard";
 import { sortJobs } from "@/utils/jobSorting";
 import { trackEvent } from '@/utils/analytics';
+import useScrollTop from "@/hooks/useScrollTop";
 
 const JOBS_PER_PAGE = 25;
 
@@ -132,6 +133,9 @@ const Index = () => {
       clearTimeout(scrollTimeout);
     };
   }, []);
+
+  // Use the scroll top hook
+  useScrollTop();
 
   if (isLoading) {
     return (
