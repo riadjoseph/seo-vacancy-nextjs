@@ -1,20 +1,30 @@
 import { Navigate } from "react-router-dom";
 import type { LoaderFunctionArgs } from "react-router-dom";
+import { lazy, Suspense } from 'react';
 import App from '@/App';
-import Index from '@/pages/Index';
-import Login from '@/pages/Login';
-import JobDetails from '@/pages/JobDetails';
-import Bookmarks from '@/pages/Bookmarks';
-import CityJobs from '@/pages/CityJobs';
-import TagJobs from '@/pages/TagJobs';
-import MyJobs from '@/pages/MyJobs';
 import NotFoundBoundary from '@/components/error-boundaries/NotFoundBoundary';
 import JobErrorBoundary from '@/components/error-boundaries/JobErrorBoundary';
 import { supabase } from "@/integrations/supabase/client";
-import ResetPassword from '@/pages/ResetPassword';
-import UpdatePassword from '@/pages/UpdatePassword';
-import MagicLink from '@/pages/MagicLink';
-import PrivacyPolicy from '@/pages/PrivacyPolicy';
+
+// Lazy load components
+const Index = lazy(() => import('@/pages/Index'));
+const Login = lazy(() => import('@/pages/Login'));
+const JobDetails = lazy(() => import('@/pages/JobDetails'));
+const Bookmarks = lazy(() => import('@/pages/Bookmarks'));
+const CityJobs = lazy(() => import('@/pages/CityJobs'));
+const TagJobs = lazy(() => import('@/pages/TagJobs'));
+const MyJobs = lazy(() => import('@/pages/MyJobs'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
+const UpdatePassword = lazy(() => import('@/pages/UpdatePassword'));
+const MagicLink = lazy(() => import('@/pages/MagicLink'));
+const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
+
+// Loading component
+const PageLoader = () => (
+  <div className="flex justify-center items-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+);
 
 // Helper functions
 const containsSpaces = (str: string) => /\s|%20/.test(str);
@@ -124,6 +134,15 @@ const myJobsLoader = async () => {
   return { jobs };
 };
 
+// Wrap component with Suspense
+const withSuspense = (Component: React.ComponentType<any>) => {
+  return (props: any) => (
+    <Suspense fallback={<PageLoader />}>
+      <Component {...props} />
+    </Suspense>
+  );
+};
+
 export const routes = [
   {
     path: "/",
@@ -132,59 +151,59 @@ export const routes = [
     children: [
       {
         index: true,
-        element: <Index />,
+        element: withSuspense(Index),
         loader: indexLoader,
       },
       {
         path: "login",
-        element: <Login />,
+        element: withSuspense(Login),
       },
       {
         path: "my-jobs",
-        element: <MyJobs />,
+        element: withSuspense(MyJobs),
         loader: myJobsLoader,
         errorElement: <NotFoundBoundary />,
       },
       {
         path: "job/:slug",
-        element: <JobDetails />,
+        element: withSuspense(JobDetails),
         loader: jobDetailsLoader,
         errorElement: <JobErrorBoundary />,
       },
       {
         path: "bookmarks",
-        element: <Bookmarks />,
+        element: withSuspense(Bookmarks),
       },
       {
         path: "jobs/city/:city",
-        element: <CityJobs />,
+        element: withSuspense(CityJobs),
         loader: cityJobsLoader,
         errorElement: <NotFoundBoundary />,
       },
       {
         path: "jobs/tag/:tag",
-        element: <TagJobs />,
+        element: withSuspense(TagJobs),
         loader: tagJobsLoader,
         errorElement: <NotFoundBoundary />,
       },
       {
         path: "/reset-password",
-        element: <ResetPassword />,
+        element: withSuspense(ResetPassword),
         errorElement: <NotFoundBoundary />
       },
       {
         path: "/update-password",
-        element: <UpdatePassword />,
+        element: withSuspense(UpdatePassword),
         errorElement: <NotFoundBoundary />
       },
       {
         path: "/magic-link",
-        element: <MagicLink />,
+        element: withSuspense(MagicLink),
         errorElement: <NotFoundBoundary />
       },
       {
         path: "/privacy-policy",
-        element: <PrivacyPolicy />,
+        element: withSuspense(PrivacyPolicy),
       },
     ],
   },

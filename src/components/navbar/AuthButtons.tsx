@@ -26,12 +26,8 @@ const AuthButtons = ({ user }: AuthButtonsProps) => {
 
   if (user) {
     return (
-      <div className="w-full md:w-auto">
-        <Button 
-          variant="outline" 
-          onClick={handleLogout}
-          className="w-full md:w-auto"
-        >
+      <div className="flex items-center gap-4">
+        <Button variant="outline" onClick={handleLogout}>
           Logout
         </Button>
       </div>
@@ -39,11 +35,7 @@ const AuthButtons = ({ user }: AuthButtonsProps) => {
   }
 
   return (
-    <Button 
-      onClick={() => navigate('/login')}
-      title="Login to post new job listings"
-      className="w-full md:w-auto"
-    >
+    <Button onClick={() => navigate('/login')} title="Login to post new job listings">
       Login to Post
     </Button>
   );

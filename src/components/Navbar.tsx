@@ -42,13 +42,13 @@ const Navbar = () => {
     <nav className={`fixed top-0 left-0 right-0 z-50 bg-background border-b transition-all duration-300 ${
       scrolled ? 'py-2 shadow-md' : 'py-4'
     }`}>
-      <div className="container mx-auto px-4 flex justify-between items-center">
+      <div className="container mx-auto px-2 sm:px-4 flex justify-between items-center">
         <Link to="/" className={`font-bold transition-all duration-300 ${
           scrolled ? 'text-sm' : 'text-base'
         }`}>SEO Job Board</Link>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           {user && (
-            <Link to="/my-jobs" className="text-sm font-medium hover:text-primary">
+            <Link to="/my-jobs" className="text-sm font-medium hover:text-primary whitespace-nowrap">
               My Jobs
             </Link>
           )}
