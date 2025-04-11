@@ -27,6 +27,21 @@ const JobDetails = ({ job }: JobDetailsProps) => {
     });
   };
 
+  const getFormattedJobUrl = (url: string) => {
+    if (url.includes('linkedin.com')) {
+      const jobIdMatch = url.match(/\/jobs\/view\/([^\/\?]+)/);
+      if (jobIdMatch && jobIdMatch[1]) {
+        const jobId = jobIdMatch[1];
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isAndroid = /Android/.test(navigator.userAgent);
+        const iosAppUrl = `linkedin://jobs/view/${jobId}`;
+        const androidAppUrl = `linkedin://company-jobs/view?jobId=${jobId}`;
+        return isIOS ? iosAppUrl : (isAndroid ? androidAppUrl : url);
+      }
+    }
+    return url;
+  };
+
   return (
     <div>
       <JobStructuredData job={job} />
@@ -58,12 +73,24 @@ const JobDetails = ({ job }: JobDetailsProps) => {
 
       <div className="mt-8">
         <a 
-          href={job.job_url} 
+          href={getFormattedJobUrl(job.job_url)} 
           target="_blank" 
-          rel="noopener noreferrer" 
-          onClick={handleApplyClick}
+          rel="noopener noreferrer"
+          onClick={(e) => {
+            handleApplyClick();
+            if (!job.job_url.includes('linkedin.com')) return;
+            const formattedUrl = getFormattedJobUrl(job.job_url);
+            const fallbackUrl = job.job_url;
+            const isAndroid = /Android/.test(navigator.userAgent);
+            const delay = isAndroid ? 750 : 500;
+            window.location.href = formattedUrl;
+            setTimeout(() => {
+              window.location.href = fallbackUrl;
+            }, delay);
+            e.preventDefault();
+          }}
         >
-          <Button className="w-full">Apply Now</Button>
+          <Button className="w-full">APPLY NOW</Button>
         </a>
       </div>
     </div>
