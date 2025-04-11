@@ -27,19 +27,27 @@ const JobDetails = ({ job }: JobDetailsProps) => {
     });
   };
 
-  const getFormattedJobUrl = (url: string) => {
-    if (url.includes('linkedin.com')) {
-      const jobIdMatch = url.match(/\/jobs\/view\/([^\/\?]+)/);
-      if (jobIdMatch && jobIdMatch[1]) {
-        const jobId = jobIdMatch[1];
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const isAndroid = /Android/.test(navigator.userAgent);
-        const iosAppUrl = `linkedin://jobs/view/${jobId}`;
-        const androidAppUrl = `linkedin://company-jobs/view?jobId=${jobId}`;
-        return isIOS ? iosAppUrl : (isAndroid ? androidAppUrl : url);
+  const getFormattedJobUrl = (rawUrl: string) => {
+    try {
+      const parsed = new URL(rawUrl);
+      const isLinkedInDomain = parsed.hostname.endsWith('linkedin.com');
+
+      if (isLinkedInDomain) {
+        const jobIdMatch = parsed.pathname.match(/\/jobs\/view\/([^\/\?]+)/);
+        if (jobIdMatch && jobIdMatch[1]) {
+          const jobId = jobIdMatch[1];
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+          const isAndroid = /Android/.test(navigator.userAgent);
+          const iosAppUrl = `linkedin://jobs/view/${jobId}`;
+          const androidAppUrl = `linkedin://company-jobs/view?jobId=${jobId}`;
+          return isIOS ? iosAppUrl : (isAndroid ? androidAppUrl : rawUrl);
+        }
       }
+
+      return rawUrl;
+    } catch (err) {
+      return rawUrl;
     }
-    return url;
   };
 
   return (

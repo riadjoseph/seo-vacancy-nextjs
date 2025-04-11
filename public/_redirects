@@ -6,6 +6,3 @@
 # This rule tells Netlify to handle all routes that don't match static files or the other rules
 # by serving the SPA's index.html. This is where the client-side router takes over.
 /*  /index.html  200
-
-# This rule must be after the rule above. It will handle the non existant pages
-/* 404
