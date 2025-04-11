@@ -34,19 +34,19 @@ const BookmarksSheet = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="sm" className="flex items-center justify-start w-full md:w-auto gap-2 px-0 md:px-4">
+        <Button variant="ghost" className="flex items-center gap-2">
           <Bookmark className="h-5 w-5" />
-          <span className="md:inline">My Bookmarks</span>
+          <span className="hidden sm:inline">My Bookmarks</span>
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-md md:max-w-lg" side="right">
+      <SheetContent className="w-[90vw] sm:w-[540px]">
         <SheetHeader>
           <SheetTitle>My Bookmarked Jobs</SheetTitle>
           <SheetDescription>
             View and manage your saved job listings
           </SheetDescription>
         </SheetHeader>
-        <div className="mt-8 space-y-4 overflow-y-auto max-h-[calc(100vh-150px)]">
+        <div className="mt-8 space-y-4 overflow-y-auto max-h-[80vh]">
           {isLoading ? (
             <p>Loading bookmarks...</p>
           ) : bookmarkedJobs.length === 0 ? (
