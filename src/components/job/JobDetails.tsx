@@ -27,6 +27,33 @@ const JobDetails = ({ job }: JobDetailsProps) => {
     // Logic to fetch job details from an API or state management
   };
 
+  // Open Graph meta tags
+  useEffect(() => {
+    if (job) {
+      document.title = job.title; // Set the document title
+      const metaTags = [
+        { property: "og:title", content: job.title },
+        { property: "og:description", content: `${job.title} at ${job.company_name} in ${job.city}` }, // Updated description
+        { property: "og:image", content: job.company_logo }, // Use the company logo URL
+        { property: "og:url", content: window.location.href }, // Current page URL
+        { property: "og:type", content: "website" }, // Type of content
+      ];
+
+      // Remove existing Open Graph tags
+      metaTags.forEach(tag => {
+        const existingTag = document.querySelector(`meta[property="${tag.property}"]`);
+        if (existingTag) {
+          existingTag.setAttribute("content", tag.content);
+        } else {
+          const meta = document.createElement("meta");
+          meta.setAttribute("property", tag.property);
+          meta.setAttribute("content", tag.content);
+          document.head.appendChild(meta);
+        }
+      });
+    }
+  }, [job]);
+
   const handleTagClick = (tag: string) => {
     const urlTag = tag.replace(/\s+/g, '-').toLowerCase();
     return `/jobs/tag/${encodeURIComponent(urlTag)}`;
