@@ -20,19 +20,35 @@ const SecondaryMenu = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Control body overflow when dropdown is open
+  // Control body overflow and viewport when dropdown is open
   useEffect(() => {
+    const viewport = document.querySelector('meta[name="viewport"]');
     if (isDropdownOpen) {
       document.body.style.overflow = 'hidden';
-      document.body.style.height = '100%';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      // Save current scroll position
+      document.body.style.top = `-${window.scrollY}px`;
+      // Prevent mobile browsers from resizing viewport
+      viewport?.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0');
     } else {
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
       document.body.style.overflow = '';
-      document.body.style.height = '';
+      // Restore scroll position
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      // Restore viewport
+      viewport?.setAttribute('content', 'width=device-width, initial-scale=1.0');
     }
     
     return () => {
       document.body.style.overflow = '';
-      document.body.style.height = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      viewport?.setAttribute('content', 'width=device-width, initial-scale=1.0');
     };
   }, [isDropdownOpen]);
 
@@ -102,51 +118,53 @@ const SecondaryMenu = ({
             </Button>
             
             {isDropdownOpen && (
-              <div className="fixed inset-0 bg-black/20 z-50 flex items-start justify-center overflow-y-auto touch-none">
-                <div className="bg-background rounded-md border shadow-lg w-full max-w-md mx-4 my-20">
-                  <div className="flex justify-between items-center p-3 border-b">
-                    <h3 className="font-semibold">Select Location</h3>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="p-3">
-                    <Input
-                      ref={inputRef}
-                      type="text"
-                      placeholder="Search cities..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full"
-                    />
-                  </div>
-                  <div className="max-h-[60vh] overflow-y-auto p-3">
-                    {filteredCities.length > 0 ? (
-                      filteredCities.map((city) => (
-                        <Button
-                          key={city}
-                          variant="ghost"
-                          size="sm"
-                          className="w-full justify-start text-left mb-1"
-                          onClick={() => {
-                            onSelectCity(city);
-                            setIsDropdownOpen(false);
-                            setSearchTerm("");
-                          }}
-                        >
-                          {city}
-                        </Button>
-                      ))
-                    ) : (
-                      <div className="text-center p-2 text-muted-foreground text-sm">
-                        No cities found
-                      </div>
-                    )}
+              <div className="fixed inset-0 bg-black/20 z-50 overflow-hidden">
+                <div className="min-h-screen w-full flex items-center justify-center p-4">
+                  <div className="bg-background rounded-md border shadow-lg w-full max-w-md relative">
+                    <div className="flex justify-between items-center p-3 border-b sticky top-0 bg-background">
+                      <h3 className="font-semibold">Select Location</h3>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-8 w-8 p-0" 
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="p-3 sticky top-[57px] bg-background z-10 border-b">
+                      <Input
+                        ref={inputRef}
+                        type="text"
+                        placeholder="Search cities..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="max-h-[60vh] overflow-y-auto p-3">
+                      {filteredCities.length > 0 ? (
+                        filteredCities.map((city) => (
+                          <Button
+                            key={city}
+                            variant="ghost"
+                            size="sm"
+                            className="w-full justify-start text-left mb-1"
+                            onClick={() => {
+                              onSelectCity(city);
+                              setIsDropdownOpen(false);
+                              setSearchTerm("");
+                            }}
+                          >
+                            {city}
+                          </Button>
+                        ))
+                      ) : (
+                        <div className="text-center p-2 text-muted-foreground text-sm">
+                          No cities found
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
