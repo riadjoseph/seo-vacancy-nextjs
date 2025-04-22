@@ -5,15 +5,15 @@ const Footer = () => {
   const totalJobs = 312;
 
   const topCities = [
-    { name: "London SEO Jobs", count: 21 },
-    { name: "Manchester SEO Jobs", count: 17 },
-    { name: "Paris SEO Jobs", count: 14 },
+    { name: "London", count: 21 },
+    { name: "Manchester", count: 17 },
+    { name: "Paris", count: 14 },
   ];
 
   const topTags = [
-    { name: "Technical SEO Jobs", count: 114 },
-    { name: "International SEO Jobs", count: 109 },
-    { name: "SEO Strategy & Management Jobs", count: 106 },
+    { name: "Technical SEO", count: 114 },
+    { name: "International SEO", count: 109 },
+    { name: "SEO Strategy & Management", count: 106 },
   ];
 
   return (
@@ -73,7 +73,7 @@ const Footer = () => {
                       to={`/jobs/city/${city.name.toLowerCase()}`}
                       className="text-sm font-medium text-gray-700 hover:text-primary"
                     >
-                      {city.name}
+                      {city.name} SEO Jobs
                     </Link>
                     <span className="text-sm font-medium text-gray-700">{city.count}</span>
                   </div>
@@ -98,7 +98,7 @@ const Footer = () => {
                        to={`/jobs/tag/${tag.name.toLowerCase().replace(/ /g, '-').replace(/&/g, '&')}`}
                       className="text-sm font-medium text-gray-700 hover:text-primary"
                     >
-                      {tag.name}
+                      {tag.name} Jobs
                     </Link>
                     <span className="text-sm font-medium text-gray-700">{tag.count}</span>
                   </div>
