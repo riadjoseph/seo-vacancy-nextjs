@@ -5,15 +5,15 @@ const Footer = () => {
   const totalJobs = 312;
 
   const topCities = [
-    { name: "London", count: 21 },
-    { name: "Manchester", count: 17 },
-    { name: "Paris", count: 14 },
+    { name: "London SEO Jobs", count: 21 },
+    { name: "Manchester SEO Jobs", count: 17 },
+    { name: "Paris SEO Jobs", count: 14 },
   ];
 
   const topTags = [
-    { name: "Technical SEO", count: 114 },
-    { name: "International SEO", count: 109 },
-    { name: "SEO Strategy & Management", count: 106 },
+    { name: "Technical SEO Jobs", count: 114 },
+    { name: "International SEO Jobs", count: 109 },
+    { name: "SEO Strategy & Management Jobs", count: 106 },
   ];
 
   return (
