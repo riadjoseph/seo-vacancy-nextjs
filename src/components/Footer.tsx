@@ -69,7 +69,12 @@ const Footer = () => {
               {topCities.map((city, index) => (
                 <div key={index} className="flex flex-col">
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-700">{city.name}</span>
+                    <Link 
+                      to={`/jobs/city/${city.name.toLowerCase()}`}
+                      className="text-sm font-medium text-gray-700 hover:text-primary"
+                    >
+                      {city.name}
+                    </Link>
                     <span className="text-sm font-medium text-gray-700">{city.count}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -89,7 +94,12 @@ const Footer = () => {
               {topTags.map((tag, index) => (
                 <div key={index} className="flex flex-col">
                   <div className="flex justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-700">{tag.name}</span>
+                    <Link 
+                      to={`/jobs/tag/${tag.name.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
+                      className="text-sm font-medium text-gray-700 hover:text-primary"
+                    >
+                      {tag.name}
+                    </Link>
                     <span className="text-sm font-medium text-gray-700">{tag.count}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2.5">
