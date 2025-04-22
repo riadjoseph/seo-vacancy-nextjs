@@ -95,7 +95,7 @@ const Footer = () => {
                 <div key={index} className="flex flex-col">
                   <div className="flex justify-between mb-1">
                     <Link 
-                      to={`/jobs/tag/${tag.name.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
+                       to={`/jobs/tag/${tag.name.toLowerCase().replace(/ /g, '-').replace(/&/g, '&')}`}
                       className="text-sm font-medium text-gray-700 hover:text-primary"
                     >
                       {tag.name}
