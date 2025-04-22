@@ -59,12 +59,12 @@ const Footer = () => {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Total Jobs Available</h3>
+            <h3 className="text-lg font-semibold">Latest Jobs Available</h3>
             <p className="text-sm text-gray-600">{totalJobs} jobs listed this week</p>
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Top 10 Cities for SEO Jobs</h3>
+            <h3 className="text-lg font-semibold">Top Cities this week</h3>
             <div className="flex flex-col space-y-2">
               {topCities.map((city, index) => (
                 <div key={index} className="flex flex-col">
@@ -84,7 +84,7 @@ const Footer = () => {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Top 3 Tags</h3>
+            <h3 className="text-lg font-semibold">Top Skills this week</h3>
             <div className="flex flex-col space-y-2">
               {topTags.map((tag, index) => (
                 <div key={index} className="flex flex-col">

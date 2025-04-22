@@ -20,6 +20,22 @@ const SecondaryMenu = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Control body overflow when dropdown is open
+  useEffect(() => {
+    if (isDropdownOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.height = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+    };
+  }, [isDropdownOpen]);
+
   // Ensure we have an array and filter out any null/undefined cities
   const activeCities = Array.from(
     new Set(
@@ -86,8 +102,8 @@ const SecondaryMenu = ({
             </Button>
             
             {isDropdownOpen && (
-              <div className="fixed inset-0 bg-black/20 z-50 flex items-start justify-center pt-20">
-                <div className="bg-background rounded-md border shadow-lg w-full max-w-md mx-4">
+              <div className="fixed inset-0 bg-black/20 z-50 flex items-start justify-center overflow-y-auto touch-none">
+                <div className="bg-background rounded-md border shadow-lg w-full max-w-md mx-4 my-20">
                   <div className="flex justify-between items-center p-3 border-b">
                     <h3 className="font-semibold">Select Location</h3>
                     <Button 
