@@ -2,18 +2,18 @@ import { Info, CheckCircle, Clock, MessageSquare } from "lucide-react"; // Impor
 import { Link } from "react-router-dom";
 
 const Footer = () => {
-  const totalJobs = 312;
+  const totalJobs = 335;
 
   const topCities = [
-    { name: "London", count: 21 },
-    { name: "Manchester", count: 17 },
-    { name: "Paris", count: 14 },
+    { name: "London", count: 20 },
+    { name: "Vilnius", count: 16 },
+    { name: "Lisbon", count: 15 },
   ];
 
   const topTags = [
-    { name: "Technical SEO", count: 114 },
-    { name: "International SEO", count: 109 },
-    { name: "SEO Strategy & Management", count: 106 },
+    { name: "Content SEO", count: 133 },
+    { name: "SEO Strategy & Management", count: 115 },
+    { name: "E-commerce SEO", count: 106 },
   ];
 
   return (
@@ -60,7 +60,7 @@ const Footer = () => {
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Latest Jobs Available</h3>
-            <p className="text-sm text-gray-600">{totalJobs} jobs listed this week</p>
+            <p className="text-sm text-gray-600">{totalJobs} jobs active this week</p>
           </div>
 
           <div className="space-y-4">
