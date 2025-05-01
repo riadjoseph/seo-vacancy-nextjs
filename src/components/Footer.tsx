@@ -7,7 +7,7 @@ const Footer = () => {
   const topCities = [
     { name: "London", count: 20 },
     { name: "Vilnius", count: 16 },
-    { name: "Lisbon", count: 15 },
+    { name: "Paris", count: 14 },
   ];
 
   const topTags = [
