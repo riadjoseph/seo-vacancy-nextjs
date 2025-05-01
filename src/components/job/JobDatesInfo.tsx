@@ -14,11 +14,11 @@ const JobDatesInfo = ({ job }: JobDatesInfoProps) => {
         </p>
       )}
 
-      {job.start_date && (
+      {/* {job.start_date && (
         <p className="text-gray-600 mb-2">
           Start date: {format(new Date(job.start_date), 'MMM d, yyyy')}
         </p>
-      )}
+      )} */}
     </>
   );
 };
