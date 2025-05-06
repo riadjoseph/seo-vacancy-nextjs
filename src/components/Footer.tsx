@@ -18,8 +18,8 @@ const Footer = () => {
 
   return (
     <footer className="mt-auto bg-gray-50 border-t">
-      <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="container py-12 overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
           <div className="space-y-4">
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
@@ -65,7 +65,7 @@ const Footer = () => {
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Top Cities this week</h3>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 pr-2">
               {topCities.map((city, index) => (
                 <div key={index} className="flex flex-col">
                   <div className="flex justify-between mb-1">
@@ -90,7 +90,7 @@ const Footer = () => {
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Top Skills this week</h3>
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 pr-2">
               {topTags.map((tag, index) => (
                 <div key={index} className="flex flex-col">
                   <div className="flex justify-between mb-1">
