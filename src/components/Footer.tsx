@@ -80,7 +80,7 @@ const Footer = () => {
                   <div className="w-full bg-gray-200 rounded-full h-2.5">
                     <div 
                       className="bg-green-400 h-2.5 rounded-full" 
-                      style={{ width: `${(city.count / 20) * 100}%` }} 
+                      style={{ width: `${(city.count / 20) * 70}%` }} 
                     />
                   </div>
                 </div>
@@ -105,7 +105,7 @@ const Footer = () => {
                   <div className="w-full bg-gray-200 rounded-full h-2.5">
                     <div 
                       className="bg-blue-400 h-2.5 rounded-full" 
-                      style={{ width: `${(tag.count / 110) * 100}%` }} 
+                      style={{ width: `${(tag.count / 110) * 70}%` }} 
                     />
                   </div>
                 </div>
