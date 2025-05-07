@@ -23,23 +23,23 @@ export default defineConfig({
       closeBundle: async () => {
         try {
           const distDir = resolve(__dirname, 'dist')
-          const indexPath = resolve(distDir, 'index.html')
-          const notFoundPath = resolve(distDir, '404.html')
+          const source404Path = resolve(__dirname, '404.html') // Source from root
+          const notFoundPath = resolve(distDir, '404.html')   // Destination in dist
 
           // Ensure dist directory exists
           if (!fs.existsSync(distDir)) {
             fs.mkdirSync(distDir, { recursive: true })
           }
 
-          // Wait for index.html to be available
-          if (fs.existsSync(indexPath)) {
-            fs.copyFileSync(indexPath, notFoundPath)
-            console.log('Successfully created 404.html')
+          // Copy 404.html from root to dist
+          if (fs.existsSync(source404Path)) {
+            fs.copyFileSync(source404Path, notFoundPath)
+            console.log('Successfully copied root 404.html to dist/404.html')
           } else {
-            console.warn('index.html not found, skipping 404.html generation')
+            console.warn('Root 404.html not found, skipping 404.html generation in dist')
           }
         } catch (error) {
-          console.error('Error generating 404.html:', error)
+          console.error('Error generating 404.html in dist:', error)
           // Don't fail the build for this error
         }
       }

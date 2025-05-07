@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    {
+      "source": "/((?!api/|_next/|favicon.ico|manifest.json|robots.txt|service-worker.js|sw.js|workbox-.*\\.js|assets/).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "public": true,
+  "trailingSlash": false
+} 
