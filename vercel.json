@@ -1,10 +1,9 @@
 {
+  "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/((?!api/|_next/|favicon.ico|manifest.json|robots.txt|service-worker.js|sw.js|workbox-.*\\.js|assets/).*)",
+      "source": "/((?!api/|_next/static/|_next/image/|favicon\\.ico|sitemap\\.xml|robots\\.txt|manifest\\.webmanifest|[\\w-]+\\.(?:js|css|json|png|jpg|jpeg|gif|svg|ico|webp|avif|map|txt|html|pdf|webmanifest)).*)",
       "destination": "/index.html"
     }
-  ],
-  "public": true,
-  "trailingSlash": false
+  ]
 } 
