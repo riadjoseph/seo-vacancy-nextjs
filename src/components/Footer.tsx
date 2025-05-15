@@ -2,18 +2,18 @@ import { Info, CheckCircle, Clock, MessageSquare } from "lucide-react"; // Impor
 import { Link } from "react-router-dom";
 
 const Footer = () => {
-  const totalJobs = 365;
+  const totalJobs = 417;
 
   const topCities = [
-    { name: "London", count: 25 },
-    { name: "Paris", count: 16 },
-    { name: "Remote", count: 15 },
+    { name: "London", count: 29 },
+    { name: "Paris", count: 17 },
+    { name: "Hamburg", count: 17 },
   ];
 
   const topTags = [
-    { name: "Local SEO", count: 141 },
-    { name: "Enterprise SEO", count: 131 },
-    { name: "Content SEO", count: 130 },
+    { name: "Local SEO", count: 147 },
+    { name: "Enterprise SEO", count: 143 },
+    { name: "E-commerce SEO", count: 137 },
   ];
 
   return (
