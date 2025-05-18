@@ -5,15 +5,15 @@ const Footer = () => {
   const totalJobs = 467;
 
   const topCities = [
-    { name: "London", count: 32 },
-    { name: "Remote", count: 18 },
-    { name: "Paris", count: 17 },
+    { name: "London", count: 26 },
+    { name: "Amsterdam", count: 16 },
+    { name: "Dussledorf", count: 15 },
   ];
 
   const topTags = [
-    { name: "Local SEO", count: 156 },
-    { name: "E-commerce SEO", count: 154 },
-    { name: "Enterprise SEO", count: 150 },
+    { name: "E-commerce SEO", count: 147 },
+    { name: "Local SEO", count: 139 },
+    { name: "Enterprise SEO", count: 134 },
   ];
 
   return (
@@ -80,7 +80,7 @@ const Footer = () => {
                   <div className="w-full bg-gray-200 rounded-full h-2.5">
                     <div 
                       className="bg-green-400 h-2.5 rounded-full" 
-                      style={{ width: `${(city.count / 20) * 70}%` }} 
+                      style={{ width: `${(city.count / 110) * 70}%` }} 
                     />
                   </div>
                 </div>
