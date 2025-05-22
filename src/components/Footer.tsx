@@ -60,7 +60,7 @@ const Footer = () => {
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Latest Jobs Available</h3>
-            <p className="text-sm text-gray-600">{totalJobs} jobs updated on 18 May 2025</p>
+            <p className="text-sm text-gray-600">{totalJobs} jobs updated on 22-May-2025</p>
           </div>
 
           <div className="space-y-4">
