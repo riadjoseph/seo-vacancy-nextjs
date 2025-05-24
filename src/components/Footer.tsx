@@ -2,18 +2,18 @@ import { Info, CheckCircle, Clock, MessageSquare } from "lucide-react"; // Impor
 import { Link } from "react-router-dom";
 
 const Footer = () => {
-  const totalJobs = 426;
+  const totalJobs = 488;
 
   const topCities = [
-    { name: "London", count: 26 },
-    { name: "Remote", count: 18 },
-    { name: "Madrid", count: 16 },
+    { name: "London", count: 28 },
+    { name: "Paris", count: 20 },
+    { name: "Barcelona", count: 19 },
   ];
 
   const topTags = [
-    { name: "E-commerce SEO", count: 156 },
-    { name: "Enterprise SEO", count: 147 },
-    { name: "Technical SEO", count: 143 },
+    { name: "SEO Strategy & Management", count: 163 },
+    { name: "Enterprise SEO", count: 160 },
+    { name: "Technical SEO", count: 159 },
   ];
 
   return (
@@ -45,7 +45,7 @@ const Footer = () => {
               Eliminate the distractions and discover only the job opportunities that matter to you.
               </p>
             </div>
-            {/* Add the WhatsApp channel link here */}
+            {/* Add the WhatsApp channel link here 
             <div className="flex items-start gap-3">
               <MessageSquare className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <a
@@ -55,12 +55,12 @@ const Footer = () => {
               >
                 Stay Updated with Our WhatsApp Notifications
               </a>
-            </div>
+            </div> */}
           </div>
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Latest Jobs Available</h3>
-            <p className="text-sm text-gray-600">{totalJobs} jobs updated on 22-May-2025</p>
+            <p className="text-sm text-gray-600">{totalJobs} jobs updated on 24-May-2025</p>
           </div>
 
           <div className="space-y-4">
