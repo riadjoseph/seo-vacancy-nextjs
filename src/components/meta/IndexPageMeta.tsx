@@ -6,8 +6,8 @@ const IndexPageMeta = () => {
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   
   const pageTitle = currentPage === 1
-    ? "SEO Job Board - Find Your Next SEO Career Opportunity"
-    : `SEO Job Board - Find Your Next SEO Career Opportunity - Page ${currentPage}`;
+    ? "EU SEO Jobs - Latest Opportunities"
+    : `EU SEO Jobs - Page ${currentPage}`;
     
   const pageDescription = currentPage === 1
     ? "Browse the latest SEO job opportunities across Europe. Remote positions, in-house roles, and agency vacancies for SEO professionals."
