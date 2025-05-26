@@ -79,7 +79,9 @@ const JobCard = ({ job, onTagClick }: JobCardProps) => {
       </div>
 
       <div className="mt-4">
-        <p className="text-gray-600 line-clamp-3">{job.description}</p>
+        <p className="text-gray-600 line-clamp-3">
+          {job.description.split('\n').slice(0, 3).join(' ')}
+        </p>
       </div>
       
       {uniqueTags.length > 0 && <JobTags tags={uniqueTags} onTagClick={handleTagClick} />}

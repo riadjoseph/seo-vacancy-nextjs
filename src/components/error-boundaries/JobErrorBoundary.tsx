@@ -73,7 +73,7 @@ const LocalExpiredJobPage = ({ job }: { job: JobFormData }) => {
   return (
     <div>
       <div className="job-description">
-        <MarkdownDisplay markdown={job.description} />
+        <MarkdownDisplay markdown={job.description.split('\n').slice(0, 3).join(' ')} />
       </div>
     </div>
   );
