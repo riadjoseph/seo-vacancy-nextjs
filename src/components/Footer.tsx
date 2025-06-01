@@ -5,15 +5,15 @@ const Footer = () => {
   const totalJobs = 488;
 
   const topCities = [
-    { name: "London", count: 28 },
-    { name: "Paris", count: 20 },
-    { name: "Barcelona", count: 19 },
+    { name: "London", count: 23 },
+    { name: "Madrid", count: 15 },
+    { name: "Barcelona", count: 13 },
   ];
 
   const topTags = [
-    { name: "SEO Strategy & Management", count: 163 },
-    { name: "Enterprise SEO", count: 160 },
-    { name: "Technical SEO", count: 159 },
+    { name: "SEO Strategy & Management", count: 127 },
+    { name: "Technical SEO", count: 121 },
+    { name: "Local SEO", count: 121 },
   ];
 
   return (
@@ -60,7 +60,7 @@ const Footer = () => {
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Latest Jobs Available</h3>
-            <p className="text-sm text-gray-600">{totalJobs} jobs updated on 24-May-2025</p>
+            <p className="text-sm text-gray-600">{totalJobs} jobs updated on 02 June 2025</p>
           </div>
 
           <div className="space-y-4">
