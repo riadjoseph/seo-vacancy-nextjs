@@ -7,13 +7,7 @@ export default defineConfig({
   server: {
     host: "::",
     port: 8080,
-    proxy: {
-      "^(?!/assets|/api).*": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-        rewrite: () => "/index.html"
-      }
-    }
+    // proxy: { ... } // Remove or comment this out
   },
   base: "/",
   plugins: [
