@@ -1,5 +1,5 @@
 User-agent: *
-Disallow:
+Disallow: *page=*
 
 Sitemap: https://seo-vacancy.eu/jobs.txt
 Sitemap: https://seo-vacancy.eu/sitemap_pages.xml
