@@ -35,7 +35,7 @@ const TagJobs = () => {
     .slice(0, 3);
   
   // Create canonical URL with hyphens and current page
-  const canonicalUrl = `${window.location.origin}/jobs/tag/${decodedTag.replace(/\s+/g, '-').toLowerCase()}${currentPage > 1 ? `?page=${currentPage}` : ''}`;
+  const canonicalUrl = `https://seo-vacancy.eu/jobs/tag/${decodedTag.replace(/\s+/g, '-').toLowerCase()}${currentPage > 1 ? `?page=${currentPage}` : ''}`;
 
   // Pagination logic
   const sortedJobs = sortJobs(jobs);

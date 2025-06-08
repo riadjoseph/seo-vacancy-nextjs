@@ -13,9 +13,10 @@ const IndexPageMeta = () => {
     ? "Browse the latest SEO job opportunities across Europe. Remote positions, in-house roles, and agency vacancies for SEO professionals."
     : `Browse the latest SEO job opportunities across Europe - Page ${currentPage}. Remote positions, in-house roles, and agency vacancies for SEO professionals.`;
     
+  const canonicalBase = "https://seo-vacancy.eu";
   const currentUrl = currentPage === 1 
-    ? `${window.location.origin}/` 
-    : `${window.location.origin}/?page=${currentPage}`;
+    ? `${canonicalBase}/` 
+    : `${canonicalBase}/?page=${currentPage}`;
 
   return (
     <Helmet>
