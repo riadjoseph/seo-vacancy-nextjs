@@ -70,10 +70,16 @@ const Pagination = ({ currentPage, totalPages, createPageUrl }: PaginationProps)
             
             const pageNum = page as number;
             return (
-              <Link
+              <button
                 key={pageNum}
-                to={createPageUrl(pageNum)}
-                onClick={() => window.scrollTo(0, 0)}
+                type="button"
+                onClick={() => {
+                  window.scrollTo(0, 0);
+                  // Use your navigation logic here, e.g.:
+                  window.history.pushState({}, '', createPageUrl(pageNum));
+                  // Optionally, trigger a router navigation if using react-router
+                  // navigate(createPageUrl(pageNum));
+                }}
                 className={`px-2 sm:px-3 py-1 sm:py-2 rounded-md text-xs sm:text-sm font-medium ${
                   currentPage === pageNum
                     ? "bg-primary text-primary-foreground"
@@ -82,7 +88,7 @@ const Pagination = ({ currentPage, totalPages, createPageUrl }: PaginationProps)
                 aria-current={currentPage === pageNum ? "page" : undefined}
               >
                 {pageNum}
-              </Link>
+              </button>
             );
           })}
         </div>
@@ -102,4 +108,4 @@ const Pagination = ({ currentPage, totalPages, createPageUrl }: PaginationProps)
   );
 };
 
-export default Pagination; 
+export default Pagination;
