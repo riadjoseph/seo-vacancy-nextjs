@@ -53,6 +53,7 @@ const Pagination = ({ currentPage, totalPages, createPageUrl }: PaginationProps)
             onClick={() => window.scrollTo(0, 0)}
             className="p-1 sm:p-2 rounded-md hover:bg-gray-100 flex items-center justify-center"
             aria-label="Previous page"
+            rel="nofollow"
           >
             <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
@@ -80,6 +81,7 @@ const Pagination = ({ currentPage, totalPages, createPageUrl }: PaginationProps)
                     : "text-gray-600 hover:bg-gray-100"
                 }`}
                 aria-current={currentPage === pageNum ? "page" : undefined}
+                rel="nofollow"
               >
                 {pageNum}
               </Link>
@@ -93,6 +95,7 @@ const Pagination = ({ currentPage, totalPages, createPageUrl }: PaginationProps)
             onClick={() => window.scrollTo(0, 0)}
             className="p-1 sm:p-2 rounded-md hover:bg-gray-100 flex items-center justify-center"
             aria-label="Next page"
+            rel="nofollow"
           >
             <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
@@ -102,4 +105,4 @@ const Pagination = ({ currentPage, totalPages, createPageUrl }: PaginationProps)
   );
 };
 
-export default Pagination; 
+export default Pagination;
