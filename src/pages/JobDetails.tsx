@@ -50,7 +50,7 @@ const JobDetailsPage = () => {
         />
         <link
           rel="canonical"
-          href={`https://seo-vacancy.eu/jobs/${jobSlug}`}
+          href={`https://seo-vacancy.eu/job/${jobSlug}`}
         />
       </Helmet>
       <div className="container max-w-4xl mx-auto py-8 px-4">
