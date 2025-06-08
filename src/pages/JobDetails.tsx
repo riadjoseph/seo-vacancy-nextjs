@@ -8,6 +8,7 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 import type { Job } from "@/data/types";
 import useScrollTop from "@/hooks/useScrollTop";
 import { useEffect } from "react";
+import { createJobSlug } from "@/utils/jobUtils";
 
 interface JobDetailsProps {
   job?: Job;
@@ -37,6 +38,8 @@ const JobDetailsPage = () => {
     { label: job.title }
   ];
   
+  const jobSlug = createJobSlug(job.title, job.company_name, job.city || "Remote");
+
   return (
     <>
       <Helmet>
@@ -44,6 +47,10 @@ const JobDetailsPage = () => {
         <meta 
           name="description" 
           content={`Vacancy for ${job.category} SEO role, at ${job.company_name}, starting ${formattedStartDate}. ${firstTag} skills required.`}
+        />
+        <link
+          rel="canonical"
+          href={`https://seo-vacancy.eu/jobs/${jobSlug}`}
         />
       </Helmet>
       <div className="container max-w-4xl mx-auto py-8 px-4">
