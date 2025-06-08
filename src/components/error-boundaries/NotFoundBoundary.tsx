@@ -51,7 +51,7 @@ const NotFoundBoundary = () => {
   return (
     <>
       <Helmet>
-        <title>Not Found | Job Board</title>
+        <title>Error, Page Not Fount</title>
         <meta name="robots" content="noindex" />
         <meta httpEquiv="Status" content="404" />
         <meta httpEquiv="status" content="404" />

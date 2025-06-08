@@ -46,7 +46,7 @@ const JobErrorBoundary = () => {
       setContent(
         <>
           <Helmet>
-            <title>Job Not Found | Job Board</title>
+            <title>Error</title>
             <meta name="robots" content="noindex" />
             <meta httpEquiv="Status" content="404" />
           </Helmet>
