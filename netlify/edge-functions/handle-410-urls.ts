@@ -65,16 +65,25 @@ export default async (request: Request, context: any) => {
     
     return new Response(
       `<!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>410 - Gone</title>
-    <meta charset="utf-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:image" content="/seo-job-board.svg" />
+  <link rel="icon" type="image/svg+xml" href="/seo-job-board.svg" />
+  <script type="module" crossorigin src="/assets/index-2XpiOrJT.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-MSQvmgUS.css">
 </head>
+
 <body>
-    <h1>410 - Gone</h1>
-    <p>The requested resource is no longer available and will not be available again.</p>
-    <p>This is a permanent condition.</p>
+    <div class="container max-w-2xl mx-auto py-12 px-4">
+      <div class="text-center space-y-6">
+        <div class="space-y-4">
+          <h1 class="text-4xl font-bold text-gray-900">That Page is Gone</h1>
+          <p class="text-xl text-gray-600">Sorry, we couldn't find the page you're looking for.</p></div><div class="flex justify-center gap-4 mt-8"><a class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors" href="/">Check Other Job Openings</a></div></div></div>
 </body>
+
 </html>`,
       {
         status: 410,
