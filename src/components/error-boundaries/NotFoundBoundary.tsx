@@ -52,6 +52,7 @@ const NotFoundBoundary = () => {
     <>
       <Helmet>
         <title>Error, Page Not Fount</title>
+        <link rel="canonical" href="https://seo-vacancy.eu/error" />
         <meta name="robots" content="noindex" />
         <meta httpEquiv="Status" content="404" />
         <meta httpEquiv="status" content="404" />
