@@ -150,8 +150,8 @@ function generateJobHTML(job: any, baseUrl: string): string {
         </article>
     </main>
     
-    <!-- Bot tracking pixel -->
-    <img src="${baseUrl}/api/track?job=${encodeURIComponent(jobSlug)}&bot=true&prerendered=true" width="1" height="1" style="display:none;" alt="">
+    <!-- Bot tracking pixel for analytics dashboard -->
+    <img src="${baseUrl}/.netlify/functions/track-bot-visit?job=${encodeURIComponent(jobSlug)}&bot=true&prerendered=true&timestamp=${Date.now()}" width="1" height="1" style="display:none;" alt="tracking" loading="eager">
 </body>
 </html>`;
 }

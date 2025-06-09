@@ -88,7 +88,9 @@ export default function MyJobs() {
           <p className="text-gray-600"> - Min. 100 words description</p>
           <p className="text-gray-600"> - Job URL, where candidates should send their application to</p>
           <p className="text-gray-600"> - Specializations: think which SEO Speciality matters most to the job</p>
-          <p className="text-gray-600">Clock on Post New Job to see the full list. You can move away from the screen to copy / paste of course.</p>
+          <p className="text-gray-600">Click on Post New Job to see the full list. You can move away from the screen to copy / paste of course.</p>
+          <p className="text-gray-600">Post your SEO job vacancy free of charge now.</p>
+          <p className="text-gray-600">You can support the site with a cup of coffee.</p>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
