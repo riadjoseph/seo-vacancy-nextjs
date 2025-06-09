@@ -8,8 +8,6 @@ import type { JobFormData } from "@/types/job";
 const JobErrorBoundary = () => {
   const error = useRouteError() as { status?: number };
   const [content, setContent] = useState<JSX.Element | null>(null);
-  const [isRetrying, setIsRetrying] = useState(false);
-  const [retryAttempts, setRetryAttempts] = useState(0);
 
   // Comprehensive bot detection
   const detectBot = () => {
@@ -49,20 +47,6 @@ const JobErrorBoundary = () => {
         cancelable: true 
       });
       window.dispatchEvent(statusEvent);
-
-      // For non-bots on job pages, try retrying if this might be a timing issue
-      if (!isBot && statusCode === 404 && retryAttempts < 2 && jobSlug) {
-        setIsRetrying(true);
-        setRetryAttempts(prev => prev + 1);
-        
-        // Wait a bit longer for potential React hydration issues
-        setTimeout(() => {
-          console.log(`Retrying job load attempt ${retryAttempts + 1} for: ${jobSlug}`);
-          window.location.reload();
-        }, 1500);
-        
-        return;
-      }
 
       // Handle 410 - Expired Job
       if (error instanceof Response && error.status === 410) {
@@ -104,14 +88,13 @@ const JobErrorBoundary = () => {
         }
       }
       
-      // Default 404 handling
+      // Default 404 handling - NO MORE RETRIES
       console.log('JobErrorBoundary: Job not found', {
         path: window.location.pathname,
         slug: jobSlug,
         statusCode: statusCode,
         userAgent: navigator.userAgent,
-        isBot: isBot,
-        retryAttempts: retryAttempts
+        isBot: isBot
       });
       
       setContent(
@@ -145,8 +128,7 @@ const JobErrorBoundary = () => {
                 Slug: {jobSlug}<br />
                 Status: {statusCode}<br />
                 User Agent: {navigator.userAgent}<br />
-                Is Bot: {isBot ? 'Yes' : 'No'}<br />
-                Retry Attempts: {retryAttempts}
+                Is Bot: {isBot ? 'Yes' : 'No'}
               </div>
             )}
           </div>
@@ -154,20 +136,8 @@ const JobErrorBoundary = () => {
       );
     };
 
-    if (!isRetrying) {
-      fetchJobData();
-    }
-  }, [error, retryAttempts, isRetrying]);
-
-  if (isRetrying) {
-    return (
-      <div className="container mx-auto py-12 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-        <p className="text-gray-600">Reloading job details...</p>
-        <p className="text-sm text-gray-500 mt-2">Attempt {retryAttempts + 1} of 3</p>
-      </div>
-    );
-  }
+    fetchJobData();
+  }, [error]);
 
   if (!content) {
     return (
