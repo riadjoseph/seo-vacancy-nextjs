@@ -19,6 +19,7 @@ const BOT_USER_AGENTS = [
   'baidu',
   'bing',
   'google',
+  'google-inspectiontool',  // Added this specifically
   
   // AI/LLM bots
   'gptbot',
@@ -134,7 +135,7 @@ export default async (request: Request, context: NetlifyContext) => {
   try {
     // Check environment variables first
     const supabaseUrl = Deno.env.get('VITE_SUPABASE_URL');
-    const supabaseKey = Deno.env.get('VITE_SUPABASE_ANON_KEY');
+    const supabaseKey = Deno.env.get('VITE_SUPABASE_KEY'); // Changed from VITE_SUPABASE_ANON_KEY
     
     console.log(`🔑 Supabase URL: ${supabaseUrl ? 'Set' : 'Missing'}`);
     console.log(`🔑 Supabase Key: ${supabaseKey ? 'Set' : 'Missing'}`);
