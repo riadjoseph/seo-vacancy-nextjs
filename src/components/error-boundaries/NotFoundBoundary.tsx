@@ -45,14 +45,23 @@ const NotFoundBoundary = () => {
         <p className="text-gray-600 mb-8">
           The page you're looking for doesn't exist or may have been moved.
         </p>
-        <div className="space-y-4">
-          <a href="/" className="text-blue-500 hover:underline block">
-            Return to homepage
-          </a>
-          <a href="/jobs" className="text-blue-500 hover:underline block">
-            Browse all jobs
-          </a>
-        </div>
+            <div className="space-y-4">
+              <a href="/" className="text-blue-500 hover:underline block">
+                Browse all jobs
+              </a>
+              <a href="https://seo-vacancy.eu/jobs/tag/technical-seo" className="text-blue-500 hover:underline block">
+                View Technical SEO job categories
+              </a>
+              <a href="https://seo-vacancy.eu/jobs/tag/content-seo" className="text-blue-500 hover:underline block">
+                View Content SEO job categories
+              </a>
+              <a href="https://seo-vacancy.eu/jobs/tag/e-commerce-seo" className="text-blue-500 hover:underline block">
+                View E-Commerce SEO job categories
+              </a>
+              <a href="https://seo-vacancy.eu/jobs/tag/enterprise-seo" className="text-blue-500 hover:underline block">
+                View Enterprise SEO job categories
+              </a>
+            </div>
         
         {/* Debug info for development */}
         {process.env.NODE_ENV === 'development' && (

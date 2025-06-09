@@ -10,7 +10,7 @@ export default async (request: Request) => {
     userAgent: userAgent,
     isBot: userAgent.toLowerCase().includes('bot'),
     supabaseUrl: Deno.env.get('VITE_SUPABASE_URL') ? 'Set' : 'Missing',
-    supabaseKey: Deno.env.get('VITE_SUPABASE_ANON_KEY') ? 'Set' : 'Missing',
+    supabaseKey: Deno.env.get('VITE_SUPABASE_KEY') ? 'Set' : 'Missing',
     netlifyUrl: Deno.env.get('URL') || 'Missing'
   };
 
