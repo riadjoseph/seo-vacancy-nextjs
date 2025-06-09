@@ -115,8 +115,17 @@ const JobErrorBoundary = () => {
               <a href="/" className="text-blue-500 hover:underline block">
                 Browse all jobs
               </a>
-              <a href="/jobs" className="text-blue-500 hover:underline block">
-                View job categories
+              <a href="https://seo-vacancy.eu/jobs/tag/technical-seo" className="text-blue-500 hover:underline block">
+                View Technical SEO job categories
+              </a>
+              <a href="https://seo-vacancy.eu/jobs/tag/content-seo" className="text-blue-500 hover:underline block">
+                View Content SEO job categories
+              </a>
+              <a href="https://seo-vacancy.eu/jobs/tag/e-commerce-seo" className="text-blue-500 hover:underline block">
+                View E-Commerce SEO job categories
+              </a>
+              <a href="https://seo-vacancy.eu/jobs/tag/enterprise-seo" className="text-blue-500 hover:underline block">
+                View Enterprise SEO job categories
               </a>
             </div>
             

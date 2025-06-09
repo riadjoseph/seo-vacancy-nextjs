@@ -63,6 +63,7 @@ async function get410Urls(): Promise<Set<string>> {
     const response = await fetch(`${Deno.env.get('URL')}/410-urls.txt`);
     
     if (!response.ok) {
+      console.log(`410-urls.txt fetch failed: ${response.status}`);
       return new Set();
     }
 
@@ -85,17 +86,20 @@ async function get410Urls(): Promise<Set<string>> {
     cached410Urls = new Set(urls);
     cacheTimestamp = now;
     
+    console.log(`✅ Loaded ${urls.length} URLs for 410 status`);
     return cached410Urls;
     
   } catch (error) {
-    console.error('Error loading 410 URLs in bot-prerender:', error);
+    console.error('❌ Error loading 410 URLs in bot-prerender:', error);
     return cached410Urls || new Set();
   }
 }
 
 const isBot = (userAgent: string): boolean => {
   const ua = userAgent.toLowerCase();
-  return BOT_USER_AGENTS.some(bot => ua.includes(bot));
+  const detected = BOT_USER_AGENTS.some(bot => ua.includes(bot));
+  console.log(`🤖 Bot detection for "${ua}": ${detected}`);
+  return detected;
 };
 
 const createJobSlug = (title: string, company: string, city: string): string => {
@@ -111,14 +115,35 @@ export default async (request: Request, context: NetlifyContext) => {
   const url = new URL(request.url);
   const pathname = url.pathname;
   
+  console.log(`🔍 Edge function called for: ${pathname}`);
+  console.log(`👤 User Agent: ${userAgent}`);
+  
   // Only process for bots visiting job pages
-  if (!isBot(userAgent) || !pathname.startsWith('/job/')) {
+  if (!pathname.startsWith('/job/')) {
+    console.log(`⏭️ Not a job page, skipping: ${pathname}`);
+    return context.next();
+  }
+  
+  if (!isBot(userAgent)) {
+    console.log(`👨 Human detected, skipping pre-render for: ${pathname}`);
     return context.next();
   }
 
-  console.log(`🤖 Bot detected: ${userAgent} visiting ${pathname}`);
+  console.log(`🤖 Bot detected visiting job page: ${pathname}`);
 
   try {
+    // Check environment variables first
+    const supabaseUrl = Deno.env.get('VITE_SUPABASE_URL');
+    const supabaseKey = Deno.env.get('VITE_SUPABASE_ANON_KEY');
+    
+    console.log(`🔑 Supabase URL: ${supabaseUrl ? 'Set' : 'Missing'}`);
+    console.log(`🔑 Supabase Key: ${supabaseKey ? 'Set' : 'Missing'}`);
+    
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('❌ Missing Supabase credentials, falling back to normal render');
+      return context.next();
+    }
+
     // Check if this URL is in your 410 list first
     const urls410 = await get410Urls();
     if (urls410.has(pathname)) {
@@ -141,6 +166,8 @@ export default async (request: Request, context: NetlifyContext) => {
             <p>This job posting has been permanently removed and is no longer available.</p>
             <p><a href="/">Browse current job openings</a></p>
           </main>
+          <!-- Bot tracking -->
+          <img src="https://wiki.booksparis.com/tracker.php?url=${encodeURIComponent(url.toString())}&title=${encodeURIComponent('Job No Longer Available')}&status=410&netlify=true&prerendered=true" width="1" height="1" style="position:absolute;left:-9999px;" alt="" />
         </body>
         </html>
       `;
@@ -150,26 +177,23 @@ export default async (request: Request, context: NetlifyContext) => {
         headers: {
           'Content-Type': 'text/html',
           'Cache-Control': 'public, max-age=86400', // 1 day cache for 410s
-          'X-Prerendered-For': userAgent
+          'X-Prerendered-For': userAgent,
+          'X-Edge-Function': 'bot-prerender'
         }
       });
     }
 
     // Extract job slug from URL
     const slug = pathname.split('/job/')[1];
+    console.log(`🔍 Looking for job with slug: ${slug}`);
+    
     if (!slug) {
+      console.log(`❌ No slug found in path: ${pathname}`);
       return context.next();
     }
 
     // Fetch job data from Supabase
-    const supabaseUrl = Deno.env.get('VITE_SUPABASE_URL');
-    const supabaseKey = Deno.env.get('VITE_SUPABASE_ANON_KEY');
-    
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase credentials');
-      return context.next();
-    }
-
+    console.log(`📡 Fetching jobs from Supabase...`);
     const response = await fetch(`${supabaseUrl}/rest/v1/jobs?select=*`, {
       headers: {
         'apikey': supabaseKey,
@@ -179,21 +203,29 @@ export default async (request: Request, context: NetlifyContext) => {
     });
 
     if (!response.ok) {
-      console.error('Supabase fetch failed:', response.status);
+      console.error(`❌ Supabase fetch failed: ${response.status} ${response.statusText}`);
       return context.next();
     }
 
     const jobs = await response.json();
+    console.log(`📄 Fetched ${jobs.length} jobs from Supabase`);
     
     // Find matching job
     const job = jobs.find((job: any) => {
       if (!job.title || !job.company_name) return false;
       const jobSlug = createJobSlug(job.title, job.company_name, job.city || 'Remote');
-      return jobSlug === slug;
+      const matches = jobSlug === slug;
+      if (matches) {
+        console.log(`✅ Found matching job: "${job.title}" with slug: ${jobSlug}`);
+      }
+      return matches;
     });
 
     if (!job) {
       console.log(`❌ Job not found for slug: ${slug}`);
+      console.log(`📝 Available job slugs: ${jobs.slice(0, 5).map((j: any) => 
+        createJobSlug(j.title || 'unknown', j.company_name || 'unknown', j.city || 'Remote')
+      ).join(', ')}`);
       
       // Return 404 HTML for bots
       const notFoundHtml = `
@@ -213,6 +245,8 @@ export default async (request: Request, context: NetlifyContext) => {
             <p>The job posting you're looking for doesn't exist or has been removed.</p>
             <p><a href="/">Browse current job openings</a></p>
           </main>
+          <!-- Bot tracking -->
+          <img src="https://wiki.booksparis.com/tracker.php?url=${encodeURIComponent(url.toString())}&title=${encodeURIComponent('Job Not Found')}&status=404&netlify=true&prerendered=true" width="1" height="1" style="position:absolute;left:-9999px;" alt="" />
         </body>
         </html>
       `;
@@ -222,7 +256,8 @@ export default async (request: Request, context: NetlifyContext) => {
         headers: {
           'Content-Type': 'text/html',
           'Cache-Control': 'public, max-age=300', // 5 minute cache for 404s
-          'X-Prerendered-For': userAgent
+          'X-Prerendered-For': userAgent,
+          'X-Edge-Function': 'bot-prerender'
         }
       });
     }
@@ -252,6 +287,8 @@ export default async (request: Request, context: NetlifyContext) => {
             <p><strong>Originally posted:</strong> ${new Date(job.created_at).toLocaleDateString()}</p>
             <p><a href="/">Browse current job openings</a></p>
           </main>
+          <!-- Bot tracking -->
+          <img src="https://wiki.booksparis.com/tracker.php?url=${encodeURIComponent(url.toString())}&title=${encodeURIComponent(job.title)}&status=410&netlify=true&prerendered=true" width="1" height="1" style="position:absolute;left:-9999px;" alt="" />
         </body>
         </html>
       `;
@@ -261,12 +298,13 @@ export default async (request: Request, context: NetlifyContext) => {
         headers: {
           'Content-Type': 'text/html',
           'Cache-Control': 'public, max-age=3600', // 1 hour cache for expired jobs
-          'X-Prerendered-For': userAgent
+          'X-Prerendered-For': userAgent,
+          'X-Edge-Function': 'bot-prerender'
         }
       });
     }
 
-    console.log(`✅ Job found for bot: ${job.title}`);
+    console.log(`✅ Pre-rendering job for bot: ${job.title}`);
 
     // Escape JSON strings to prevent XSS
     const escapeJsonString = (str: string) => str.replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
@@ -307,9 +345,6 @@ export default async (request: Request, context: NetlifyContext) => {
           "url": "${url.toString()}"
         }
         </script>
-        
-        <!-- Your Bot Tracking Pixel -->
-        <img src="https://wiki.booksparis.com/tracker.php?url=${encodeURIComponent(url.toString())}&title=${encodeURIComponent(job.title)}&status=200&netlify=true&prerendered=true" width="1" height="1" style="position:absolute;left:-9999px;" alt="" />
       </head>
       <body>
         <main>
@@ -323,6 +358,8 @@ export default async (request: Request, context: NetlifyContext) => {
             <div>${job.description.replace(/\n/g, '<br>')}</div>
           </div>
         </main>
+        <!-- Bot tracking -->
+        <img src="https://wiki.booksparis.com/tracker.php?url=${encodeURIComponent(url.toString())}&title=${encodeURIComponent(job.title)}&status=200&netlify=true&prerendered=true" width="1" height="1" style="position:absolute;left:-9999px;" alt="" />
       </body>
       </html>
     `;
@@ -333,12 +370,13 @@ export default async (request: Request, context: NetlifyContext) => {
         'Content-Type': 'text/html',
         'Cache-Control': 'public, max-age=1800', // 30 minute cache
         'X-Prerendered-For': userAgent,
-        'X-Bot-Prerender': 'true'
+        'X-Bot-Prerender': 'true',
+        'X-Edge-Function': 'bot-prerender'
       }
     });
 
   } catch (error) {
-    console.error('Edge function error:', error);
+    console.error('❌ Edge function error:', error);
     return context.next();
   }
 };
