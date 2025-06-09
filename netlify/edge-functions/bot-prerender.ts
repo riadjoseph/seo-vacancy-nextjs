@@ -45,6 +45,14 @@ const BOT_USER_AGENTS = [
   'telegram'
 ];
 
+function createJobSlug(title: string, company: string, city: string): string {
+  const slug = `${title}-${company}-${city}`
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+  return slug;
+}
+
 function isBot(userAgent: string): boolean {
   const ua = userAgent.toLowerCase();
   return BOT_USER_AGENTS.some(bot => ua.includes(bot));
@@ -57,7 +65,7 @@ function generateJobHTML(job: any, baseUrl: string): string {
     `${job.title} position available. Apply now!`;
   
   const companyName = job.company_name || 'Company';
-  const location = job.location || 'Remote';
+  const location = job.city || 'Remote';
   const salaryRange = job.salary_min && job.salary_max ? 
     `€${job.salary_min.toLocaleString()} - €${job.salary_max.toLocaleString()}` : 
     'Competitive salary';
@@ -74,7 +82,7 @@ function generateJobHTML(job: any, baseUrl: string): string {
     },
     "jobLocation": {
       "@type": "Place",
-      "address": location
+      "address": job.city || 'Remote'
     },
     "employmentType": job.job_type || "FULL_TIME",
     "datePosted": job.created_at || new Date().toISOString(),
@@ -136,13 +144,13 @@ function generateJobHTML(job: any, baseUrl: string): string {
             <section class="application">
                 <h2>How to Apply</h2>
                 <p>This position is available for applications. Visit our main site to apply.</p>
-                ${job.application_url ? `<a href="${job.application_url}" target="_blank" rel="noopener">Apply Now</a>` : ''}
+                ${job.job_url ? `<a href="${job.job_url}" target="_blank" rel="noopener">Apply Now</a>` : ''}
             </section>
         </article>
     </main>
     
     <!-- Bot tracking pixel -->
-    <img src="${baseUrl}/api/track?job=${job.slug}&bot=true&prerendered=true" width="1" height="1" style="display:none;" alt="">
+    <img src="${baseUrl}/api/track?job=${encodeURIComponent(createJobSlug(job.title || '', job.company_name || '', job.city || ''))}&bot=true&prerendered=true" width="1" height="1" style="display:none;" alt="">
 </body>
 </html>`;
 }
@@ -250,95 +258,57 @@ export default async (request: Request) => {
     // Continue with normal processing if 410 check fails
   }
 
-  // Query Supabase for the job with timeout protection
+  // Query Supabase for the job
   try {
     console.log(`📡 Fetching jobs from Supabase...`);
     
-    // Add timeout to prevent edge function from hanging
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Supabase query timeout')), 10000) // 10 second timeout
-    );
-    
-    const supabasePromise = supabase
+    const { data: jobs, error } = await supabase
       .from('jobs')
-      .select('*')
-      .eq('slug', jobSlug)
-      .single();
-
-    const { data: jobs, error } = await Promise.race([supabasePromise, timeoutPromise]);
+      .select('*');
 
     if (error) {
-      console.log(`❌ Supabase error: ${error.message}`);
-      
-      // If it's a "not found" error, return 404, otherwise 500
-      if (error.code === 'PGRST116' || error.message.includes('No rows')) {
-        console.log(`🚫 Job not found in database: ${jobSlug}`);
-        return new Response('Job not found', { 
-          status: 404,
-          headers: {
-            'Content-Type': 'text/plain',
-            'X-Edge-Function': 'bot-prerender-404'
-          }
-        });
-      }
-      
-      return new Response('Database error', { 
-        status: 500,
-        headers: {
-          'Content-Type': 'text/plain',
-          'X-Edge-Function': 'bot-prerender-error'
-        }
-      });
+      console.log(`❌ Supabase error: ${error.message}, code: ${error.code}`);
+      return new Response('Database error', { status: 500 });
     }
 
-    if (!jobs) {
+    if (!jobs || jobs.length === 0) {
+      console.log(`❌ No jobs found in database`);
+      return new Response('Job not found', { status: 404 });
+    }
+
+    console.log(`📄 Fetched ${jobs.length} jobs from Supabase`);
+
+    // Find job by matching generated slug
+    const matchingJob = jobs.find(job => {
+      if (!job.title || !job.company_name || !job.city) return false;
+      
+      const generatedSlug = createJobSlug(job.title, job.company_name, job.city);
+      return generatedSlug === jobSlug;
+    });
+
+    if (!matchingJob) {
       console.log(`❌ No job found with slug: ${jobSlug}`);
-      return new Response('Job not found', { 
-        status: 404,
-        headers: {
-          'Content-Type': 'text/plain',
-          'X-Edge-Function': 'bot-prerender-404'
-        }
-      });
+      return new Response('Job not found', { status: 404 });
     }
 
-    console.log(`✅ Found matching job: "${jobs.title}" with slug: ${jobSlug}`);
-    console.log(`✅ Pre-rendering job for bot: ${jobs.title}`);
+    console.log(`✅ Found matching job: "${matchingJob.title}" with slug: ${jobSlug}`);
+    console.log(`✅ Pre-rendering job for bot: ${matchingJob.title}`);
 
     // Generate the pre-rendered HTML
-    const html = generateJobHTML(jobs, netlifyUrl);
+    const html = generateJobHTML(matchingJob, netlifyUrl);
     
     return new Response(html, {
       status: 200,
       headers: {
         'Content-Type': 'text/html',
         'X-Edge-Function': 'bot-prerender',
-        'Cache-Control': 'public, max-age=300' // Cache for 5 minutes
+        'Cache-Control': 'public, max-age=300'
       }
     });
 
   } catch (error) {
     console.log(`❌ Error in edge function: ${error.message}`);
-    
-    // Check if it's a timeout error
-    if (error.message.includes('timeout')) {
-      console.log(`⏰ Edge function timed out for slug: ${jobSlug}`);
-      return new Response('Request timeout', { 
-        status: 408,
-        headers: {
-          'Content-Type': 'text/plain',
-          'X-Edge-Function': 'bot-prerender-timeout'
-        }
-      });
-    }
-    
-    return new Response('Internal server error', { 
-      status: 500,
-      headers: {
-        'Content-Type': 'text/plain',
-        'X-Edge-Function': 'bot-prerender-error'
-      }
-    });
+    return new Response('Internal server error', { status: 500 });
   }
 };
 
