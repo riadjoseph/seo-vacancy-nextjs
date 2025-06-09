@@ -59,6 +59,7 @@ function isBot(userAgent: string): boolean {
 }
 
 function generateJobHTML(job: any, baseUrl: string): string {
+  const jobSlug = createJobSlug(job.title || '', job.company_name || '', job.city || '');
   const metaTitle = `${job.title} | Job Board`;
   const metaDescription = job.description ? 
     job.description.substring(0, 155) + '...' : 
@@ -109,11 +110,11 @@ function generateJobHTML(job: any, baseUrl: string): string {
     <meta property="og:title" content="${metaTitle}">
     <meta property="og:description" content="${metaDescription}">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="${baseUrl}/job/${job.slug}">
+    <meta property="og:url" content="${baseUrl}/job/${jobSlug}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${metaTitle}">
     <meta name="twitter:description" content="${metaDescription}">
-    <link rel="canonical" href="${baseUrl}/job/${job.slug}">
+    <link rel="canonical" href="${baseUrl}/job/${jobSlug}">
     <script type="application/ld+json">${JSON.stringify(structuredData)}</script>
 </head>
 <body>
@@ -150,7 +151,7 @@ function generateJobHTML(job: any, baseUrl: string): string {
     </main>
     
     <!-- Bot tracking pixel -->
-    <img src="${baseUrl}/api/track?job=${encodeURIComponent(createJobSlug(job.title || '', job.company_name || '', job.city || ''))}&bot=true&prerendered=true" width="1" height="1" style="display:none;" alt="">
+    <img src="${baseUrl}/api/track?job=${encodeURIComponent(jobSlug)}&bot=true&prerendered=true" width="1" height="1" style="display:none;" alt="">
 </body>
 </html>`;
 }
