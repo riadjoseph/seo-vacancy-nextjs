@@ -32,6 +32,7 @@ const JobDetailsPage = () => {
 
   const firstTag = job.tags?.[0] || "SEO";
   const formattedStartDate = job.start_date ? format(new Date(job.start_date), 'MMM d, yyyy') : 'flexible date';
+  const formattedCategory = job.category ? job.category.toLowerCase().replace(/_/g, ' ') : '';
   
   const breadcrumbItems = [
     { label: "Jobs", href: "/" },
@@ -43,10 +44,10 @@ const JobDetailsPage = () => {
   return (
     <>
       <Helmet>
-        <title>{`${firstTag} job vacancy in ${job.city || 'Remote'} by ${job.company_name}`}</title>
+        <title>{`SEO Job - ${job.title} - ${job.city} by ${job.company_name}`} | SEO-Vacancy.eu</title>
         <meta 
           name="description" 
-          content={`Vacancy for ${job.category} SEO role, at ${job.company_name}, starting ${formattedStartDate}. ${firstTag} skills required.`}
+          content={`Got ${firstTag} skills? ${formattedCategory} SEO Job at ${job.company_name}, ${job.city}}. Apply now!`}
         />
         <link
           rel="canonical"

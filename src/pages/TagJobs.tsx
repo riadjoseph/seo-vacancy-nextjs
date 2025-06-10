@@ -14,7 +14,8 @@ window.postMessage("message", origin);
 const TagJobs = () => {
   const { tag } = useParams();
   const { jobs = [] } = useLoaderData() as { jobs: Job[] };
-  const decodedTag = tag ? decodeURIComponent(tag).replace(/-/g, ' ') : '';
+  const decodedTag = tag ? decodeURIComponent(tag).replace(/-/g, ' ').replace(/&/g, 'and') : '';
+  const formattedTag = decodedTag.charAt(0).toUpperCase() + decodedTag.slice(1);
   const [searchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   
@@ -47,21 +48,21 @@ const TagJobs = () => {
     <div className="container py-8">
       <Helmet>
         <link rel="canonical" href={canonicalUrl} />
-        <title>{`${jobs.length} jobs with ${decodedTag} skills required`}</title>
+        <title>{`${formattedTag} Jobs | ${jobs.length} Positions Available`}</title>
         <meta
           name="description"
-          content={`${decodedTag} skills for companies in ${topCities.slice(0, 3).join(', ').replace(/,([^,]*)$/, ' and$1')}`}
+          content={`${formattedTag} Skills for SEO Jobs in ${topCities.slice(0, 3).join(', ').replace(/,([^,]*)$/, ' and$1')}`}
         />
       </Helmet>
       
       <BreadcrumbNav
         items={[
           { label: "Jobs", href: "/" },
-          { label: `Positions requiring "${decodedTag}"` }
+          { label: `Jobs with \"${formattedTag}\" skills` }
         ]}
       />
       
-      <h1 className="text-4xl font-bold mb-8">Positions requiring "{decodedTag}"</h1>
+      <h1 className="text-4xl font-bold mb-8">Positions requiring "{formattedTag}"</h1>
       
       {paginatedJobs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -71,7 +72,7 @@ const TagJobs = () => {
         </div>
       ) : (
         <div className="text-center py-12">
-          <p className="text-gray-500">No positions found requiring "{decodedTag}".</p>
+          <p className="text-gray-500">No positions found requiring "{formattedTag}".</p>
         </div>
       )}
       

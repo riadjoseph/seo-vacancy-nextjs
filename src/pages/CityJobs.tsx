@@ -32,11 +32,11 @@ const CityJobs = () => {
     <div className="container py-8">
       <Helmet>
         <title>
-          {`SEO vacancies in ${displayCity} - ${firstTag || 'SEO'} and ${secondTag || 'Digital Marketing'} skills required`}
+          {`SEO Jobs in ${displayCity} - ${activeJobsCount} Jobs Available.`}
         </title>
         <meta
           name="description"
-          content={`SEO roles available in ${displayCity} - ${activeJobsCount} jobs open.`}
+          content={`SEO Jobs in ${displayCity} -  Skills Required:  ${firstTag} and ${secondTag}.`}
         />
       </Helmet>
       
