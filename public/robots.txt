@@ -3,5 +3,3 @@ Disallow: *page=*
 
 Sitemap: https://seo-vacancy.eu/jobs.txt
 Sitemap: https://seo-vacancy.eu/sitemap_pages.xml
-#Let SEs know these urls are removed with 410 HTTP status code
-Sitemap: https://seo-vacancy.eu/410-urls.txt
