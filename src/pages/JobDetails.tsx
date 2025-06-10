@@ -47,7 +47,7 @@ const JobDetailsPage = () => {
         <title>{`SEO Job - ${job.title} - ${job.city} by ${job.company_name}`} | SEO-Vacancy.eu</title>
         <meta 
           name="description" 
-          content={`Got ${firstTag} skills? ${formattedCategory} SEO Job at ${job.company_name}, ${job.city}}. Apply now!`}
+          content={`Got ${firstTag} skills? ${formattedCategory} SEO Job at ${job.company_name}, ${job.city}. Apply now!`}
         />
         <link
           rel="canonical"
