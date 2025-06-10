@@ -20,15 +20,47 @@ export const handler: Handler = async (event) => {
     const userAgent = event.headers['user-agent'] || '';
     const ip = event.headers['client-ip'] || event.headers['x-forwarded-for'] || '';
 
-    // Extract bot type from user agent
-    const botType = userAgent.toLowerCase().includes('googlebot') ? 'Google' :
-                   userAgent.toLowerCase().includes('bingbot') ? 'Bing' :
-                   userAgent.toLowerCase().includes('facebook') ? 'Facebook' :
-                   userAgent.toLowerCase().includes('linkedin') ? 'LinkedIn' :
-                   userAgent.toLowerCase().includes('twitter') ? 'Twitter' :
-                   userAgent.toLowerCase().includes('gptbot') ? 'ChatGPT' :
-                   userAgent.toLowerCase().includes('claude') ? 'Claude' :
-                   'Other';
+    // Extract bot type from user agent with comprehensive detection
+    const userAgentLower = userAgent.toLowerCase();
+    
+    const botType = 
+      // Google bots
+      userAgentLower.includes('googlebot') || userAgentLower.includes('google-inspectiontool') || 
+      userAgentLower.includes('google') && userAgentLower.includes('bard') ? 'Google' :
+      
+      // Microsoft/Bing bots
+      userAgentLower.includes('bingbot') || userAgentLower.includes('bnnqpt') ? 'Bing' :
+      
+      // Social media bots
+      userAgentLower.includes('facebook') ? 'Facebook' :
+      userAgentLower.includes('linkedin') ? 'LinkedIn' :
+      userAgentLower.includes('twitter') ? 'Twitter' :
+      
+      // AI bots
+      userAgentLower.includes('gptbot') || userAgentLower.includes('chatgpt') || 
+      userAgentLower.includes('openai') ? 'ChatGPT' :
+      userAgentLower.includes('claude') ? 'Claude' :
+      userAgentLower.includes('gemini') || userAgentLower.includes('bard') ? 'Gemini' :
+      userAgentLower.includes('copilot') ? 'Copilot' :
+      
+      // Content/Writing AI bots
+      userAgentLower.includes('writesonic') ? 'Writesonic' :
+      userAgentLower.includes('copy.ai') ? 'Copy.AI' :
+      userAgentLower.includes('neeva') ? 'Neeva' :
+      
+      // SEO/Analysis bots
+      userAgentLower.includes('astatic') ? 'Astatic' :
+      userAgentLower.includes('outrider') ? 'Outrider' :
+      userAgentLower.includes('perplexity') ? 'Perplexity' :
+      userAgentLower.includes('edgeservices') ? 'EdgeServices' :
+      userAgentLower.includes('nimble') ? 'Nimble' :
+      
+      // Catch remaining AI patterns
+      userAgentLower.includes('ai.') || userAgentLower.includes('.ai') ? 'AI Bot' :
+      userAgentLower.includes('gpt.') || userAgentLower.includes('.gpt') ? 'GPT Bot' :
+      
+      // Default
+      'Other';
 
     // Store the visit in Supabase
     await supabase

@@ -174,6 +174,18 @@ export const handler: Handler = async (event) => {
         .bot-twitter { background: #1da1f2; color: white; }
         .bot-chatgpt { background: #10a37f; color: white; }
         .bot-claude { background: #cc785c; color: white; }
+        .bot-gemini { background: #4285f4; color: white; }
+        .bot-copilot { background: #0078d4; color: white; }
+        .bot-writesonic { background: #6366f1; color: white; }
+        .bot-copy\.ai { background: #8b5cf6; color: white; }
+        .bot-neeva { background: #7c3aed; color: white; }
+        .bot-perplexity { background: #059669; color: white; }
+        .bot-ai\.bot { background: #f59e0b; color: white; }
+        .bot-gpt\.bot { background: #10a37f; color: white; }
+        .bot-astatic { background: #6b7280; color: white; }
+        .bot-outrider { background: #6b7280; color: white; }
+        .bot-edgeservices { background: #6b7280; color: white; }
+        .bot-nimble { background: #6b7280; color: white; }
         .bot-other { background: #6b7280; color: white; }
 
         .loading {
@@ -326,7 +338,19 @@ export const handler: Handler = async (event) => {
                     'LinkedIn': '#0a66c2',
                     'Twitter': '#1da1f2',
                     'ChatGPT': '#10a37f',
-                    'Claude': '#cc785c'
+                    'Claude': '#cc785c',
+                    'Gemini': '#4285f4',
+                    'Copilot': '#0078d4',
+                    'Writesonic': '#6366f1',
+                    'Copy.AI': '#8b5cf6',
+                    'Neeva': '#7c3aed',
+                    'Perplexity': '#059669',
+                    'AI Bot': '#f59e0b',
+                    'GPT Bot': '#10a37f',
+                    'Astatic': '#6b7280',
+                    'Outrider': '#6b7280',
+                    'EdgeServices': '#6b7280',
+                    'Nimble': '#6b7280'
                 };
                 return colors[bot] || '#6b7280';
             });
@@ -402,7 +426,7 @@ export const handler: Handler = async (event) => {
             const container = document.getElementById('recent-visits-list');
             container.innerHTML = recentVisits.map(visit => {
                 const time = new Date(visit.visited_at).toLocaleString();
-                const botClass = \`bot-\${visit.bot_type.toLowerCase()}\`;
+                const botClass = \`bot-\${visit.bot_type.toLowerCase().replace(/[^a-z0-9]/g, '')}\`;
                 
                 return \`
                     <div class="visit-item">
