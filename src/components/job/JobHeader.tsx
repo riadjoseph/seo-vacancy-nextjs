@@ -21,7 +21,7 @@ const JobHeader = ({ job }: JobHeaderProps) => {
           />
         )}
         <div>
-          <h1 className="text-xl md:text-2xl font-bold">{job.title}</h1>
+          <h1 className="text-xl md:text-2xl font-bold">{job.title} {job.city}</h1>
           <p className="text-lg md:text-xl text-gray-600">{job.company_name}</p>
         </div>
       </div>
