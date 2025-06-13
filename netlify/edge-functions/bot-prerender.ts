@@ -1,4 +1,4 @@
-// netlify/edge-functions/bot-prerender.ts
+console.log(`✅ Pre-rendering for bot: ${job.title}`);// netlify/edge-functions/bot-prerender.ts
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
