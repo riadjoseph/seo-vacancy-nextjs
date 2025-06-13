@@ -116,7 +116,7 @@ function getCacheHeadersForBot(userAgent: string, cacheDuration: number): Record
 
 function generateJobHTML(job: any, baseUrl: string): { html: string; etag: string } {
   const jobSlug = createJobSlug(job.title || '', job.company_name || '', job.city || '');
-  const metaTitle = `${job.title} | Job Board`;
+  const metaTitle = `${job.title} | SEO Job - ${job.company_name || 'Company'}`;
   const metaDescription = job.description ? 
     job.description.substring(0, 155) + '...' : 
     `${job.title} position available. Apply now!`;
@@ -231,7 +231,7 @@ function generate410HTML(path: string, baseUrl: string): string {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job No Longer Available | Job Board</title>
+    <title>Job No Longer Available</title>
     <meta name="description" content="This job posting is no longer available. Browse our current job openings.">
     <meta name="robots" content="noindex">
 </head>
