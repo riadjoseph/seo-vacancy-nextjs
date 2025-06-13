@@ -77,7 +77,7 @@ function sanitizeForHTML(text: string): string {
     .replace(/'/g, '&#39;');
 }
 
-function generateJobHTML(job: any, baseUrl: string): string {
+function generateJobHTML(job: any, baseUrl: string, requestedSlug: string): string {
   const title = sanitizeForHTML(job.title || '');
   const description = sanitizeForHTML(job.description || '');
   const companyName = sanitizeForHTML(job.company_name || 'Company');
@@ -94,8 +94,8 @@ function generateJobHTML(job: any, baseUrl: string): string {
     `€${job.salary_min.toLocaleString()} - €${job.salary_max.toLocaleString()}` : 
     'Competitive salary';
 
-  // Use actual slug from database, fallback to generated
-  const jobSlug = job.slug || createJobSlug(job.title || '', job.company_name || '', job.city || '');
+  // Use the requested URL slug directly (no generation needed!)
+  const canonicalSlug = requestedSlug;
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -176,7 +176,7 @@ function generateJobHTML(job: any, baseUrl: string): string {
         </article>
     </main>
     
-    <img src="${baseUrl}/.netlify/functions/track-bot-visit?job=${encodeURIComponent(jobSlug)}&bot=true&prerendered=true&timestamp=${Date.now()}" width="1" height="1" style="display:none;" alt="tracking" loading="eager">
+    <img src="${baseUrl}/.netlify/functions/track-bot-visit?job=${encodeURIComponent(canonicalSlug)}&bot=true&prerendered=true&timestamp=${Date.now()}" width="1" height="1" style="display:none;" alt="tracking" loading="eager">
 </body>
 </html>`;
 }
@@ -339,7 +339,7 @@ export default async (request: Request) => {
       console.log(`✅ Pre-rendering for bot: ${job.title}`);
 
       // Generate HTML and response
-      const html = generateJobHTML(job, netlifyUrl);
+      const html = generateJobHTML(job, netlifyUrl, jobSlug);
       const cacheDuration = getJobCacheDuration(job);
       const cacheHeaders = getCacheHeaders(userAgent, cacheDuration);
       
