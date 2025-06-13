@@ -45,6 +45,16 @@ const BOT_USER_AGENTS = [
   'telegram'
 ];
 
+// Cache duration constants
+const CACHE_DURATIONS = {
+  FRESH_JOB: 43200,      // 12 hours for jobs with >7 days left
+  EXPIRING_SOON: 21600,  // 6 hours for jobs with 3-7 days left
+  CRITICAL: 3600,        // 1 hour for jobs with <3 days left
+  NOT_FOUND: 3600,       // 1 hour for 404s
+  GONE: 86400,           // 24 hours for 410s
+  ERROR: 300             // 5 minutes for errors
+};
+
 function createJobSlug(title: string, company: string, city: string): string {
   const slug = `${title}-${company}-${city}`
     .toLowerCase()
@@ -58,7 +68,53 @@ function isBot(userAgent: string): boolean {
   return BOT_USER_AGENTS.some(bot => ua.includes(bot));
 }
 
-function generateJobHTML(job: any, baseUrl: string): string {
+function getJobCacheDuration(job: any): number {
+  if (!job.expires_at && !job.created_at) {
+    return CACHE_DURATIONS.FRESH_JOB;
+  }
+  
+  const now = new Date();
+  const expiresAt = new Date(job.expires_at || job.created_at);
+  const daysUntilExpiry = Math.ceil((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  
+  if (daysUntilExpiry <= 3) {
+    return CACHE_DURATIONS.CRITICAL;
+  } else if (daysUntilExpiry <= 7) {
+    return CACHE_DURATIONS.EXPIRING_SOON;
+  } else {
+    return CACHE_DURATIONS.FRESH_JOB;
+  }
+}
+
+function getCacheHeadersForBot(userAgent: string, cacheDuration: number): Record<string, string> {
+  const ua = userAgent.toLowerCase();
+  const staleWhileRevalidate = cacheDuration * 2;
+  
+  const baseHeaders = {
+    'Cache-Control': `public, max-age=${cacheDuration}, stale-while-revalidate=${staleWhileRevalidate}`,
+    'CDN-Cache-Control': `public, max-age=${cacheDuration * 2}`,
+    'Vary': 'User-Agent',
+  };
+  
+  if (ua.includes('googlebot')) {
+    return {
+      ...baseHeaders,
+      'X-Robots-Tag': 'index, follow',
+      'Netlify-CDN-Cache-Control': `public, max-age=${cacheDuration * 2}, stale-while-revalidate=604800`, // 7 days stale
+    };
+  } else if (ua.includes('facebookexternalhit') || ua.includes('twitterbot') || ua.includes('linkedinbot')) {
+    // Social media bots - cache more aggressively
+    return {
+      ...baseHeaders,
+      'Cache-Control': `public, max-age=604800, stale-while-revalidate=1209600`, // 7 days + 14 days stale
+      'CDN-Cache-Control': `public, max-age=604800`,
+    };
+  } else {
+    return baseHeaders;
+  }
+}
+
+function generateJobHTML(job: any, baseUrl: string): { html: string; etag: string } {
   const jobSlug = createJobSlug(job.title || '', job.company_name || '', job.city || '');
   const metaTitle = `${job.title} | Job Board`;
   const metaDescription = job.description ? 
@@ -70,6 +126,17 @@ function generateJobHTML(job: any, baseUrl: string): string {
   const salaryRange = job.salary_min && job.salary_max ? 
     `€${job.salary_min.toLocaleString()} - €${job.salary_max.toLocaleString()}` : 
     'Competitive salary';
+
+  // Generate ETag based on job data
+  const jobHash = JSON.stringify({
+    id: job.id,
+    title: job.title,
+    updated_at: job.updated_at,
+    expires_at: job.expires_at,
+    description: job.description?.substring(0, 100) // First 100 chars for change detection
+  });
+  
+  const etag = `"${btoa(jobHash).replace(/[^a-zA-Z0-9]/g, '').slice(0, 16)}"`;
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -100,7 +167,7 @@ function generateJobHTML(job: any, baseUrl: string): string {
     } : undefined
   };
 
-  return `<!DOCTYPE html>
+  const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -154,6 +221,8 @@ function generateJobHTML(job: any, baseUrl: string): string {
     <img src="${baseUrl}/.netlify/functions/track-bot-visit?job=${encodeURIComponent(jobSlug)}&bot=true&prerendered=true&timestamp=${Date.now()}" width="1" height="1" style="display:none;" alt="tracking" loading="eager">
 </body>
 </html>`;
+
+  return { html, etag };
 }
 
 function generate410HTML(path: string, baseUrl: string): string {
@@ -200,9 +269,38 @@ export default async (request: Request) => {
 
   console.log(`🤖 Bot detected visiting job page: ${url.pathname}`);
 
-  // Check environment variables first
+  // Try to get response from Netlify's edge cache first
+  try {
+    const cacheKey = new Request(url.toString(), {
+      headers: {
+        'User-Agent': userAgent,
+        'X-Cache-Key': `bot-${url.pathname}`
+      }
+    });
+    
+    const cachedResponse = await caches.default.match(cacheKey);
+    if (cachedResponse) {
+      console.log(`⚡ Serving from edge cache: ${url.pathname}`);
+      
+      // Add cache hit header
+      const response = new Response(cachedResponse.body, {
+        status: cachedResponse.status,
+        headers: {
+          ...Object.fromEntries(cachedResponse.headers.entries()),
+          'X-Cache-Status': 'HIT',
+          'X-Cache-Source': 'edge'
+        }
+      });
+      
+      return response;
+    }
+  } catch (error) {
+    console.log(`⚠️ Edge cache check failed: ${error.message}`);
+  }
+
+  // Check environment variables
   const supabaseUrl = Deno.env.get('VITE_SUPABASE_URL');
-  const supabaseKey = Deno.env.get('VITE_SUPABASE_KEY'); // Changed from VITE_SUPABASE_ANON_KEY
+  const supabaseKey = Deno.env.get('VITE_SUPABASE_KEY');
   
   console.log(`🔑 Supabase URL: ${supabaseUrl ? 'Set' : 'Missing'}`);
   console.log(`🔑 Supabase Key: ${supabaseKey ? 'Set' : 'Missing'}`);
@@ -213,7 +311,8 @@ export default async (request: Request) => {
       status: 500,
       headers: {
         'Content-Type': 'text/plain',
-        'X-Edge-Function': 'bot-prerender-config-error'
+        'X-Edge-Function': 'bot-prerender-config-error',
+        'Cache-Control': `public, max-age=${CACHE_DURATIONS.ERROR}`
       }
     });
   }
@@ -245,14 +344,29 @@ export default async (request: Request) => {
     if (urlsFor410.includes(currentPath)) {
       console.log(`🚫 URL in 410 list: ${currentPath}`);
       const html410 = generate410HTML(currentPath, netlifyUrl);
-      return new Response(html410, {
+      
+      const response410 = new Response(html410, {
         status: 410,
         headers: {
           'Content-Type': 'text/html',
           'X-Edge-Function': 'bot-prerender-410',
-          'Cache-Control': 'public, max-age=86400' // Cache 410s for 24 hours
+          'Cache-Control': `public, max-age=${CACHE_DURATIONS.GONE}`,
+          'X-Cache-Status': 'MISS'
         }
       });
+
+      // Cache the 410 response
+      try {
+        const cacheKey = new Request(url.toString(), {
+          headers: { 'User-Agent': userAgent, 'X-Cache-Key': `bot-${url.pathname}` }
+        });
+        await caches.default.put(cacheKey, response410.clone());
+        console.log(`💾 Cached 410 response: ${currentPath}`);
+      } catch (error) {
+        console.log(`⚠️ Failed to cache 410 response: ${error.message}`);
+      }
+
+      return response410;
     }
   } catch (error) {
     console.log(`⚠️ Error checking 410 list: ${error.message}`);
@@ -269,12 +383,38 @@ export default async (request: Request) => {
 
     if (error) {
       console.log(`❌ Supabase error: ${error.message}, code: ${error.code}`);
-      return new Response('Database error', { status: 500 });
+      return new Response('Database error', { 
+        status: 500,
+        headers: {
+          'Cache-Control': `public, max-age=${CACHE_DURATIONS.ERROR}`
+        }
+      });
     }
 
     if (!jobs || jobs.length === 0) {
       console.log(`❌ No jobs found in database`);
-      return new Response('Job not found', { status: 404 });
+      
+      const notFoundResponse = new Response('Job not found', { 
+        status: 404,
+        headers: {
+          'Content-Type': 'text/plain',
+          'Cache-Control': `public, max-age=${CACHE_DURATIONS.NOT_FOUND}`,
+          'X-Cache-Status': 'MISS'
+        }
+      });
+
+      // Cache 404 responses
+      try {
+        const cacheKey = new Request(url.toString(), {
+          headers: { 'User-Agent': userAgent, 'X-Cache-Key': `bot-${url.pathname}` }
+        });
+        await caches.default.put(cacheKey, notFoundResponse.clone());
+        console.log(`💾 Cached 404 response: ${jobSlug}`);
+      } catch (error) {
+        console.log(`⚠️ Failed to cache 404: ${error.message}`);
+      }
+
+      return notFoundResponse;
     }
 
     console.log(`📄 Fetched ${jobs.length} jobs from Supabase`);
@@ -289,27 +429,90 @@ export default async (request: Request) => {
 
     if (!matchingJob) {
       console.log(`❌ No job found with slug: ${jobSlug}`);
-      return new Response('Job not found', { status: 404 });
+      
+      const notFoundResponse = new Response('Job not found', { 
+        status: 404,
+        headers: {
+          'Content-Type': 'text/plain',
+          'Cache-Control': `public, max-age=${CACHE_DURATIONS.NOT_FOUND}`,
+          'X-Cache-Status': 'MISS'
+        }
+      });
+
+      // Cache 404 responses
+      try {
+        const cacheKey = new Request(url.toString(), {
+          headers: { 'User-Agent': userAgent, 'X-Cache-Key': `bot-${url.pathname}` }
+        });
+        await caches.default.put(cacheKey, notFoundResponse.clone());
+      } catch (error) {
+        console.log(`⚠️ Failed to cache 404: ${error.message}`);
+      }
+
+      return notFoundResponse;
     }
 
     console.log(`✅ Found matching job: "${matchingJob.title}" with slug: ${jobSlug}`);
     console.log(`✅ Pre-rendering job for bot: ${matchingJob.title}`);
 
-    // Generate the pre-rendered HTML
-    const html = generateJobHTML(matchingJob, netlifyUrl);
+    // Check if client has current version via ETag
+    const { html, etag } = generateJobHTML(matchingJob, netlifyUrl);
+    const clientETag = request.headers.get('if-none-match');
     
-    return new Response(html, {
+    if (clientETag === etag) {
+      console.log(`🎯 ETag match, returning 304: ${etag}`);
+      return new Response(null, { 
+        status: 304,
+        headers: {
+          'ETag': etag,
+          'Cache-Control': `public, max-age=${getJobCacheDuration(matchingJob)}`,
+          'X-Cache-Status': 'NOT_MODIFIED'
+        }
+      });
+    }
+
+    // Get cache duration and headers based on job age and bot type
+    const cacheDuration = getJobCacheDuration(matchingJob);
+    const cacheHeaders = getCacheHeadersForBot(userAgent, cacheDuration);
+    
+    const response = new Response(html, {
       status: 200,
       headers: {
         'Content-Type': 'text/html',
         'X-Edge-Function': 'bot-prerender',
-        'Cache-Control': 'public, max-age=300'
+        'X-Cache-Status': 'MISS',
+        'X-Job-Expires': matchingJob.expires_at || 'unknown',
+        'X-Cache-Duration': cacheDuration.toString(),
+        'ETag': etag,
+        ...cacheHeaders
       }
     });
 
+    // Store in edge cache for future requests
+    try {
+      const cacheKey = new Request(url.toString(), {
+        headers: {
+          'User-Agent': userAgent,
+          'X-Cache-Key': `bot-${url.pathname}`
+        }
+      });
+      
+      await caches.default.put(cacheKey, response.clone());
+      console.log(`💾 Cached job HTML: ${jobSlug} (${cacheDuration}s)`);
+    } catch (error) {
+      console.log(`⚠️ Failed to cache response: ${error.message}`);
+    }
+
+    return response;
+
   } catch (error) {
     console.log(`❌ Error in edge function: ${error.message}`);
-    return new Response('Internal server error', { status: 500 });
+    return new Response('Internal server error', { 
+      status: 500,
+      headers: {
+        'Cache-Control': `public, max-age=${CACHE_DURATIONS.ERROR}`
+      }
+    });
   }
 };
 
