@@ -1,7 +1,5 @@
 // netlify/edge-functions/bot-prerender.ts
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
 // In-memory deduplication map
 const pendingRequests = new Map<string, Promise<Response>>();
 
@@ -136,11 +134,11 @@ function generateJobHTML(job: any, baseUrl: string, requestedSlug: string): stri
     <meta property="og:title" content="${metaTitle}">
     <meta property="og:description" content="${metaDescription}">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="${baseUrl}/job/${jobSlug}">
+    <meta property="og:url" content="${baseUrl}/job/${canonicalSlug}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${metaTitle}">
     <meta name="twitter:description" content="${metaDescription}">
-    <link rel="canonical" href="${baseUrl}/job/${jobSlug}">
+    <link rel="canonical" href="${baseUrl}/job/${canonicalSlug}">
     <script type="application/ld+json">${JSON.stringify(structuredData)}</script>
 </head>
 <body>
@@ -186,7 +184,7 @@ function generate410HTML(path: string, baseUrl: string): string {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-1.0">
     <title>Job No Longer Available</title>
     <meta name="description" content="This job posting is no longer available. Browse our current job openings.">
     <meta name="robots" content="noindex">
@@ -200,6 +198,27 @@ function generate410HTML(path: string, baseUrl: string): string {
     <img src="${baseUrl}/api/track?path=${encodeURIComponent(path)}&status=410&bot=true" width="1" height="1" style="display:none;" alt="">
 </body>
 </html>`;
+}
+
+// Direct Supabase REST API call - no dependencies needed!
+async function querySupabase(url: string, key: string, query: string): Promise<any[]> {
+  const headers = {
+    'apikey': key,
+    'Authorization': `Bearer ${key}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
+  };
+
+  const response = await fetch(`${url}/rest/v1/jobs?${query}`, {
+    method: 'GET',
+    headers: headers
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
 export default async (request: Request) => {
@@ -246,8 +265,6 @@ export default async (request: Request) => {
       });
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     // Check 410 list first (optional optimization)
     try {
       const response = await fetch(`${netlifyUrl}/410-urls.txt`);
@@ -271,69 +288,64 @@ export default async (request: Request) => {
       console.log(`⚠️ Could not load 410 URLs: ${error.message}`);
     }
 
-    // 🚀 OPTIMIZED QUERY: Try slug column first, fallback gracefully
+    // 🚀 OPTIMIZED QUERY using direct REST API
     try {
       console.log(`📡 Querying job by slug: ${jobSlug}`);
       
+      let job: any = null;
+      
       // Primary: Query by slug column (should work now!)
-      let { data: job, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .eq('slug', jobSlug)
-        .limit(1)
-        .maybeSingle();
-
-      // Fallback: If slug query fails or no result, try the old method
-      if (error || !job) {
-        if (error) {
-          console.log(`⚠️ Slug query issue: ${error.message}`);
+      try {
+        const jobs = await querySupabase(
+          supabaseUrl, 
+          supabaseKey, 
+          `slug=eq.${encodeURIComponent(jobSlug)}&limit=1`
+        );
+        
+        if (jobs && jobs.length > 0) {
+          job = jobs[0];
+          console.log(`⚡ Found job via optimized query: "${job.title}"`);
         } else {
           console.log(`⚠️ No job found with slug: ${jobSlug}`);
         }
-        
+      } catch (slugError) {
+        console.log(`⚠️ Slug query failed: ${slugError.message}`);
+      }
+
+      // Fallback: If slug query fails or no result, try the old method
+      if (!job) {
         console.log(`🔄 Falling back to full table scan...`);
         
-        const { data: jobs, error: fallbackError } = await supabase
-          .from('jobs')
-          .select('*');
+        try {
+          const jobs = await querySupabase(supabaseUrl, supabaseKey, 'select=*');
+          console.log(`📄 Scanning ${jobs.length} jobs for slug match...`);
 
-        if (fallbackError) {
+          // Find job by matching generated slug
+          const matchingJob = jobs.find(jobItem => {
+            if (!jobItem.title || !jobItem.company_name || !jobItem.city) return false;
+            const generatedSlug = createJobSlug(jobItem.title, jobItem.company_name, jobItem.city);
+            return generatedSlug === jobSlug;
+          });
+
+          if (matchingJob) {
+            job = matchingJob;
+            console.log(`✅ Found job via fallback: "${job.title}"`);
+          }
+        } catch (fallbackError) {
           console.log(`❌ Fallback query error: ${fallbackError.message}`);
           return new Response('Database error', { 
             status: 500,
             headers: { 'Cache-Control': 'public, max-age=300' }
           });
         }
+      }
 
-        if (!jobs || jobs.length === 0) {
-          console.log(`❌ No jobs found in database`);
-          return new Response('Job not found', { 
-            status: 404,
-            headers: { 'Cache-Control': 'public, max-age=3600' }
-          });
-        }
-
-        console.log(`📄 Scanning ${jobs.length} jobs for slug match...`);
-
-        // Find job by matching generated slug
-        const matchingJob = jobs.find(jobItem => {
-          if (!jobItem.title || !jobItem.company_name || !jobItem.city) return false;
-          const generatedSlug = createJobSlug(jobItem.title, jobItem.company_name, jobItem.city);
-          return generatedSlug === jobSlug;
+      if (!job) {
+        console.log(`❌ No job found with slug: ${jobSlug}`);
+        return new Response('Job not found', { 
+          status: 404,
+          headers: { 'Cache-Control': 'public, max-age=3600' }
         });
-
-        if (!matchingJob) {
-          console.log(`❌ No job found with generated slug: ${jobSlug}`);
-          return new Response('Job not found', { 
-            status: 404,
-            headers: { 'Cache-Control': 'public, max-age=3600' }
-          });
-        }
-
-        job = matchingJob;
-        console.log(`✅ Found job via fallback: "${job.title}"`);
-      } else {
-        console.log(`⚡ Found job via optimized query: "${job.title}"`);
       }
 
       console.log(`✅ Pre-rendering for bot: ${job.title}`);
@@ -349,10 +361,10 @@ export default async (request: Request) => {
         status: 200,
         headers: {
           'Content-Type': 'text/html',
-          'X-Edge-Function': 'bot-prerender',
+          'X-Edge-Function': 'bot-prerender-rest',
           'X-Job-Expires': job.expires_at || 'unknown',
           'X-Cache-Duration': cacheDuration.toString(),
-          'X-Query-Method': job.slug ? 'optimized' : 'fallback',
+          'X-Query-Method': job.slug === jobSlug ? 'optimized' : 'fallback',
           'Vary': 'User-Agent',
           ...cacheHeaders
         }
