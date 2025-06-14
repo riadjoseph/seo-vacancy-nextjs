@@ -3,6 +3,11 @@
 // In-memory deduplication map
 const pendingRequests = new Map<string, Promise<Response>>();
 
+// Cache for 410 URLs
+let cached410Urls: Set<string> | null = null;
+let cache410Timestamp = 0;
+const CACHE_410_DURATION = 5 * 60 * 1000; // 5 minutes
+
 const BOT_USER_AGENTS = [
   // Search engine bots
   'adsbot', 'applebot', 'baiduspider', 'googlebot', 'mediapartners-google',
@@ -27,6 +32,53 @@ function createJobSlug(title: string, company: string, city: string): string {
 function isBot(userAgent: string): boolean {
   const ua = userAgent.toLowerCase();
   return BOT_USER_AGENTS.some(bot => ua.includes(bot));
+}
+
+async function get410Urls(netlifyUrl: string): Promise<Set<string>> {
+  const now = Date.now();
+  
+  // Return cached URLs if cache is still valid
+  if (cached410Urls && (now - cache410Timestamp) < CACHE_410_DURATION) {
+    return cached410Urls;
+  }
+
+  try {
+    console.log(`🔄 Loading 410 URLs from ${netlifyUrl}/410-urls.txt`);
+    const response = await fetch(`${netlifyUrl}/410-urls.txt`);
+    
+    if (!response.ok) {
+      console.warn('Could not fetch 410-urls.txt file');
+      return cached410Urls || new Set();
+    }
+
+    const text = await response.text();
+    const urls = text
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line && !line.startsWith('#')) // Remove empty lines and comments
+      .map(url => {
+        // Handle both full URLs and paths
+        if (url.startsWith('http')) {
+          try {
+            return new URL(url).pathname;
+          } catch {
+            return url;
+          }
+        }
+        // Ensure URL starts with /
+        return url.startsWith('/') ? url : `/${url}`;
+      });
+
+    cached410Urls = new Set(urls);
+    cache410Timestamp = now;
+    
+    console.log(`✅ Loaded ${urls.length} URLs for 410 status`);
+    return cached410Urls;
+    
+  } catch (error) {
+    console.warn(`⚠️ Could not load 410 URLs: ${error.message}`);
+    return cached410Urls || new Set();
+  }
 }
 
 function getJobCacheDuration(job: any): number {
@@ -184,18 +236,25 @@ function generate410HTML(path: string, baseUrl: string): string {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job No Longer Available</title>
     <meta name="description" content="This job posting is no longer available. Browse our current job openings.">
     <meta name="robots" content="noindex">
+    <meta property="og:title" content="Job No Longer Available">
+    <meta property="og:description" content="This job posting is no longer available. Browse our current job openings.">
 </head>
 <body>
-    <main>
-        <h1>Job No Longer Available</h1>
-        <p>This job posting has been removed or has expired.</p>
-        <p><a href="${baseUrl}">Browse current job openings</a></p>
-    </main>
-    <img src="${baseUrl}/api/track?path=${encodeURIComponent(path)}&status=410&bot=true" width="1" height="1" style="display:none;" alt="">
+    <div class="container max-w-2xl mx-auto py-12 px-4">
+      <div class="text-center space-y-6">
+        <div class="space-y-4">
+          <h1 class="text-4xl font-bold text-gray-900">That Job is No Longer Available</h1>
+          <p class="text-xl text-gray-600">This job posting has been removed or has expired.</p>
+        </div>
+        <div class="flex justify-center gap-4 mt-8">
+          <a class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors" href="${baseUrl}">Browse Current SEO Jobs</a>
+        </div>
+      </div>
+    </div>
 </body>
 </html>`;
 }
@@ -239,6 +298,39 @@ export default async (request: Request) => {
 
   console.log(`🤖 Bot detected visiting job page`);
 
+  // Environment variables
+  const supabaseUrl = Deno.env.get('VITE_SUPABASE_URL');
+  const supabaseKey = Deno.env.get('VITE_SUPABASE_KEY');
+  const netlifyUrl = Deno.env.get('URL') || 'https://seo-vacancy.eu';
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.log(`❌ Missing Supabase credentials`);
+    return new Response('Configuration error', {
+      status: 500,
+      headers: { 
+        'Content-Type': 'text/plain', 
+        'X-Edge-Function': 'bot-prerender-config-error', 
+        'Cache-Control': 'public, max-age=300' 
+      }
+    });
+  }
+
+  // FIRST: Check 410 list before any database queries
+  const urls410 = await get410Urls(netlifyUrl);
+  if (urls410.has(url.pathname)) {
+    console.log(`🚫 Returning 410 for: ${url.pathname}`);
+    const html410 = generate410HTML(url.pathname, netlifyUrl);
+    return new Response(html410, {
+      status: 410,
+      headers: { 
+        'Content-Type': 'text/html',
+        'X-Edge-Function': 'bot-prerender-410',
+        'X-410-Source': 'cache',
+        'Cache-Control': 'public, max-age=86400' 
+      }
+    });
+  }
+
   // Deduplication: serve existing promise if present
   if (pendingRequests.has(cacheKey)) {
     console.log(`⚡ Deduplicating concurrent request for: ${cacheKey}`);
@@ -248,46 +340,6 @@ export default async (request: Request) => {
 
   // Set up async handler for this request
   const requestPromise = (async (): Promise<Response> => {
-    // Environment variables
-    const supabaseUrl = Deno.env.get('VITE_SUPABASE_URL');
-    const supabaseKey = Deno.env.get('VITE_SUPABASE_KEY');
-    const netlifyUrl = Deno.env.get('URL') || 'https://seo-vacancy.eu';
-
-    if (!supabaseUrl || !supabaseKey) {
-      console.log(`❌ Missing Supabase credentials`);
-      return new Response('Configuration error', {
-        status: 500,
-        headers: { 
-          'Content-Type': 'text/plain', 
-          'X-Edge-Function': 'bot-prerender-config-error', 
-          'Cache-Control': 'public, max-age=300' 
-        }
-      });
-    }
-
-    // Check 410 list first (optional optimization)
-    try {
-      const response = await fetch(`${netlifyUrl}/410-urls.txt`);
-      if (response.ok) {
-        const text = await response.text();
-        const urlsFor410 = text.split('\n').filter(line => line.trim());
-        if (urlsFor410.includes(url.pathname)) {
-          console.log(`🚫 URL in 410 list: ${url.pathname}`);
-          const html410 = generate410HTML(url.pathname, netlifyUrl);
-          return new Response(html410, {
-            status: 410,
-            headers: { 
-              'Content-Type': 'text/html',
-              'X-Edge-Function': 'bot-prerender-410',
-              'Cache-Control': 'public, max-age=86400' 
-            }
-          });
-        }
-      }
-    } catch (error) {
-      console.log(`⚠️ Could not load 410 URLs: ${error.message}`);
-    }
-
     // 🚀 OPTIMIZED QUERY using direct REST API
     try {
       console.log(`📡 Querying job by slug: ${jobSlug}`);
@@ -342,9 +394,14 @@ export default async (request: Request) => {
 
       if (!job) {
         console.log(`❌ No job found with slug: ${jobSlug}`);
-        return new Response('Job not found', { 
+        // Return 404 and suggest adding to 410 list
+        return new Response(`Job not found: ${jobSlug}. Consider adding to 410 list.`, { 
           status: 404,
-          headers: { 'Cache-Control': 'public, max-age=3600' }
+          headers: { 
+            'Content-Type': 'text/plain',
+            'X-Missing-Slug': jobSlug,
+            'Cache-Control': 'public, max-age=3600' 
+          }
         });
       }
 
