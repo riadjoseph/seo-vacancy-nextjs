@@ -134,8 +134,8 @@ function generateBreadcrumbHtml(job: any, baseUrl: string, jobSlug: string): str
   return `
 <nav aria-label="Breadcrumb">
   <ol>
-    <li><a href="https://seo-vacancy.eu">Jobs</a></li>
-    <li><a href="https://seo-vacancy.eu/jobs/city/${city}</a></li>
+    <li><a href="${baseUrl}">Jobs</a></li>
+    <li><a href="${baseUrl}/jobs/city/${encodeURIComponent(city.toLowerCase())}">SEO Jobs in ${city}</a></li>
     <li aria-current="page">${fullTitle}</li>
   </ol>
 </nav>
