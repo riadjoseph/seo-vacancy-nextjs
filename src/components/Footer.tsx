@@ -2,8 +2,8 @@ import { Info, CheckCircle, Clock, MessageSquare } from "lucide-react"; // Impor
 import { Link } from "react-router-dom";
 
 const Footer = () => {
-  const totalJobs = 240;
-
+  const totalJobs = 240; // Example total jobs count, replace with actual data
+  const dateUpdated = "15 June 2025"; // Example date, replace with actual data
   const topCities = [
     { name: "London", count: 16 },
     { name: "Madrid", count: 11 },
@@ -60,7 +60,7 @@ const Footer = () => {
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Latest Jobs Available</h3>
-            <p className="text-sm text-gray-600">{totalJobs} jobs updated 05 June 2025</p>
+            <p className="text-sm text-gray-600">{totalJobs} jobs updated {dateUpdated}</p>
           </div>
 
           <div className="space-y-4">
