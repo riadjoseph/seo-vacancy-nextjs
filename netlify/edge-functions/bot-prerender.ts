@@ -134,8 +134,8 @@ function generateBreadcrumbHtml(job: any, baseUrl: string, jobSlug: string): str
   return `
 <nav aria-label="Breadcrumb">
   <ol>
-    <li><a href="${baseUrl}/jobs">Jobs</a></li>
-    <li><a href="${baseUrl}/jobs-in-${encodeURIComponent(city.toLowerCase())}">SEO Jobs in ${city}</a></li>
+    <li><a href="https://seo-vacancy.eu">Jobs</a></li>
+    <li><a href="https://seo-vacancy.eu/jobs/city/${city}</a></li>
     <li aria-current="page">${fullTitle}</li>
   </ol>
 </nav>
@@ -154,13 +154,13 @@ function generateBreadcrumbJsonLd(job: any, baseUrl: string, jobSlug: string): o
         "@type": "ListItem",
         "position": 1,
         "name": "Jobs",
-        "item": `${baseUrl}/jobs`
+        "item": `${baseUrl}`
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": `SEO Jobs in ${city}`,
-        "item": `${baseUrl}/jobs-in-${encodeURIComponent(city.toLowerCase())}`
+        "item": `${baseUrl}/jobs/city/${encodeURIComponent(city.toLowerCase())}`
       },
       {
         "@type": "ListItem",
