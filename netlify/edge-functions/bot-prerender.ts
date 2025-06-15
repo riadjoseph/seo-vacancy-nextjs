@@ -127,6 +127,51 @@ function sanitizeForHTML(text: string): string {
     .replace(/'/g, '&#39;');
 }
 
+function generateBreadcrumbHtml(job: any, baseUrl: string, jobSlug: string): string {
+  const city = sanitizeForHTML(job.city || 'Unknown');
+  const title = sanitizeForHTML(job.title || 'Job');
+  const fullTitle = `${title} - ${city}`;
+  return `
+<nav aria-label="Breadcrumb">
+  <ol>
+    <li><a href="${baseUrl}/jobs">Jobs</a></li>
+    <li><a href="${baseUrl}/jobs-in-${encodeURIComponent(city.toLowerCase())}">SEO Jobs in ${city}</a></li>
+    <li aria-current="page">${fullTitle}</li>
+  </ol>
+</nav>
+  `.trim();
+}
+
+function generateBreadcrumbJsonLd(job: any, baseUrl: string, jobSlug: string): object {
+  const city = job.city || 'Unknown';
+  const title = job.title || 'Job';
+  const fullTitle = `${title} - ${city}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Jobs",
+        "item": `${baseUrl}/jobs`
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": `SEO Jobs in ${city}`,
+        "item": `${baseUrl}/jobs-in-${encodeURIComponent(city.toLowerCase())}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": fullTitle,
+        "item": `${baseUrl}/job/${jobSlug}`
+      }
+    ]
+  };
+}
+
 function generateJobHTML(job: any, baseUrl: string, requestedSlug: string): string {
   const title = sanitizeForHTML(job.title || '');
   const description = sanitizeForHTML(job.description || '');
@@ -176,6 +221,10 @@ function generateJobHTML(job: any, baseUrl: string, requestedSlug: string): stri
     } : undefined
   };
 
+  // Breadcrumb HTML and JSON-LD
+  const breadcrumbHtml = generateBreadcrumbHtml(job, baseUrl, requestedSlug);
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd(job, baseUrl, requestedSlug);
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -192,8 +241,10 @@ function generateJobHTML(job: any, baseUrl: string, requestedSlug: string): stri
     <meta name="twitter:description" content="${metaDescription}">
     <link rel="canonical" href="${baseUrl}/job/${canonicalSlug}">
     <script type="application/ld+json">${JSON.stringify(structuredData)}</script>
+    <script type="application/ld+json">${JSON.stringify(breadcrumbJsonLd)}</script>
 </head>
 <body>
+    ${breadcrumbHtml}
     <main>
         <article>
             <header>

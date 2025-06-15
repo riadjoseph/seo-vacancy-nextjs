@@ -14,7 +14,7 @@ window.postMessage("message", origin);
 const TagJobs = () => {
   const { tag } = useParams();
   const { jobs = [] } = useLoaderData() as { jobs: Job[] };
-  const decodedTag = tag ? decodeURIComponent(tag).replace(/-/g, ' ').replace(/&/g, 'and') : '';
+  const decodedTag = tag ? decodeURIComponent(tag).replace(/-/g, ' ') : '';
   const formattedTag = decodedTag.charAt(0).toUpperCase() + decodedTag.slice(1);
   const [searchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
