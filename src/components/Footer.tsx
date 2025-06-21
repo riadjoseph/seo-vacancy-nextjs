@@ -2,18 +2,18 @@ import { Info, CheckCircle, Clock, MessageSquare } from "lucide-react"; // Impor
 import { Link } from "react-router-dom";
 
 const Footer = () => {
-  const totalJobs = 240; // Example total jobs count, replace with actual data
-  const dateUpdated = "15 June 2025"; // Example date, replace with actual data
+  const totalJobs = 313; // Example total jobs count, replace with actual data
+  const dateUpdated = "21 June 2025"; // Example date, replace with actual data
   const topCities = [
-    { name: "London", count: 16 },
-    { name: "Madrid", count: 11 },
-    { name: "Paris", count: 11 },
+    { name: "Amsterdam", count: 14 },
+    { name: "Leeds", count: 13 },
+    { name: "Madrid", count: 12 },
   ];
 
   const topTags = [
-    { name: "Content SEO", count: 86 },
-    { name: "Local SEO", count: 84 },
-    { name: "SEO Strategy & Management", count: 83 },
+    { name: "Technical SEO", count: 118 },
+    { name: "Enterprise SEO", count: 78 },
+    { name: "SEO Strategy & Management", count: 106 },
   ];
 
   return (
