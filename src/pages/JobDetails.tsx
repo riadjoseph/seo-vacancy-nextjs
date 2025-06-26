@@ -30,7 +30,9 @@ const JobDetailsPage = () => {
     throw new Response("Not Found", { status: 404 });
   }
 
-  const firstTag = job.tags?.[0] || "SEO";
+  const firstTag = job.tags?.[0] || "SEO Job";
+  const secondTag = job.tags?.[1] || "SEO Job";
+  const thirdTag = job.tags?.[2] || "SEO Job";
   const formattedStartDate = job.start_date ? format(new Date(job.start_date), 'MMM d, yyyy') : 'flexible date';
   const formattedCategory = job.category ? job.category.toLowerCase().replace(/_/g, ' ') : '';
 
@@ -48,10 +50,10 @@ const JobDetailsPage = () => {
   return (
     <>
       <Helmet>
-        <title>{`SEO Job - ${job.title} - ${job.city} by ${job.company_name}`} | SEO-Vacancy.eu</title>
+        <title>{`${job.title} - ${job.city} by ${job.company_name}`} | SEO-Vacancy.eu</title>
         <meta 
           name="description" 
-          content={`Got ${firstTag} skills? ${formattedCategory} SEO Job at ${job.company_name}, ${job.city}. Apply now!`}
+          content={`${firstTag}, ${secondTag}, ${thirdTag}, ${formattedCategory} at ${job.company_name}, ${job.city}. Posted on ${job.posted_date}`}
         />
         <link
           rel="canonical"
