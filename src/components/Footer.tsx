@@ -2,18 +2,18 @@ import { Info, CheckCircle, Clock, MessageSquare } from "lucide-react"; // Impor
 import { Link } from "react-router-dom";
 
 const Footer = () => {
-  const totalJobs = 393; // Example total jobs count, replace with actual data
-  const dateUpdated = "24 June 2025"; // Example date, replace with actual data
+  const totalJobs = 464; // Example total jobs count, replace with actual data
+  const dateUpdated = "26 June 2025"; // Example date, replace with actual data
   const topCities = [
-    { name: "Amsterdam", count: 19 },
-    { name: "Leeds", count: 18 },
-    { name: "Paris", count: 21 },
+    { name: "Nice", count: 10 },
+    { name: "Munich", count: 13 },
+    { name: "Kiev", count: 11 },
   ];
 
   const topTags = [
-    { name: "Technical SEO", count: 118 },
-    { name: "Enterprise SEO", count: 78 },
-    { name: "SEO Strategy & Management", count: 106 },
+    { name: "Technical SEO", count: 163 },
+    { name: "Enterprise SEO", count: 121 },
+    { name: "SEO Strategy & Management", count: 154 },
   ];
 
   return (
@@ -64,7 +64,7 @@ const Footer = () => {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Top Cities this week</h3>
+            <h3 className="text-lg font-semibold">Featured Cities this week</h3>
             <div className="flex flex-col space-y-2 pr-2">
               {topCities.map((city, index) => (
                 <div key={index} className="flex flex-col">
