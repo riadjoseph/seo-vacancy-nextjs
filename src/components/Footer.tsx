@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   const totalJobs = 464; // Example total jobs count, replace with actual data
-  const dateUpdated = "26 June 2025"; // Example date, replace with actual data
+  const dateUpdated = "28 June 2025"; // Example date, replace with actual data
   const topCities = [
-    { name: "Nice", count: 10 },
-    { name: "Munich", count: 13 },
-    { name: "Kiev", count: 11 },
+    { name: "Bristol", count: 8 },
+    { name: "Manchester", count: 10 },
+    { name: "Hamburg", count: 12 },
   ];
 
   const topTags = [
