@@ -1,4 +1,4 @@
 User-agent: *
-Disallow: *page=*
+Disallow:
 
 Sitemap: https://seo-vacancy.eu/jobs.txt
