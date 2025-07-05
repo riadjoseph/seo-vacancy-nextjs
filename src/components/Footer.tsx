@@ -2,18 +2,18 @@ import { Info, CheckCircle, Clock, MessageSquare } from "lucide-react"; // Impor
 import { Link } from "react-router-dom";
 
 const Footer = () => {
-  const totalJobs = 464; // Example total jobs count, replace with actual data
-  const dateUpdated = "28 June 2025"; // Example date, replace with actual data
+  const totalJobs = 544; //  total jobs count, replace with actual data
+  const dateUpdated = "05 July 2025"; //  date, replace with actual data
   const topCities = [
-    { name: "Bristol", count: 8 },
-    { name: "Manchester", count: 10 },
-    { name: "Hamburg", count: 12 },
+    { name: "Madrid", count: 25 },
+    { name: "Amsterdam", count: 31 },
+    { name: "Paris", count: 33 },
   ];
 
   const topTags = [
-    { name: "Technical SEO", count: 163 },
-    { name: "Enterprise SEO", count: 121 },
-    { name: "SEO Strategy & Management", count: 154 },
+    { name: "Technical SEO", count: 185 },
+    { name: "Enterprise SEO", count: 165 },
+    { name: "SEO Strategy & Management", count: 168 },
   ];
 
   return (
@@ -24,7 +24,7 @@ const Footer = () => {
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <p className="text-sm text-gray-600">
-              WakeUpHappy: Your Premier Job Board for SEO Professionals in Europe.
+              WakeUpHappy: A no-BS Job Board for SEO Professionals in Europe.
               </p>
             </div>
           </div>
@@ -33,7 +33,7 @@ const Footer = () => {
             <div className="flex items-start gap-3">
               <CheckCircle className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <p className="text-sm text-gray-600">
-              Enjoy seamless job postings without the clutter—no newsletters, no ads, just results. Support our mission by posting your jobs here. Contribute a small amount to get your ad featured!
+              Seamless job posting without the clutter: no newsletters, no ads, no endless loops, just results. Support our mission by posting your SEO job here. Contribute a small amount to get your ad featured!
               </p>
             </div>
           </div>
@@ -42,7 +42,7 @@ const Footer = () => {
             <div className="flex items-start gap-3">
               <Clock className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
               <p className="text-sm text-gray-600">
-              Eliminate the distractions and discover only the job opportunities that matter to you.
+              Eliminate the distractions, we focus on the job opportunities that matter to you, only.
               </p>
             </div>
             {/* Add the WhatsApp channel link here 
