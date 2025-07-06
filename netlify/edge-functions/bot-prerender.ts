@@ -281,17 +281,38 @@ function generateJobHTML(job: any, baseUrl: string, requestedSlug: string): stri
       <div style="max-width: 900px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between;">
         <section>
           <h3 style="margin-bottom: 0.5rem;">SEO Jobs by City</h3>
+          <p><strong>Find SEO jobs in your city. Recruiters, post your European SEO job opening for free.</strong></p>
           <ul style="list-style: none; padding: 0; margin: 0;">
+            <li title="Remote SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/remote"><strong>Remote SEO Jobs</strong></a></li>
+            <li title="Paris SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/paris"><strong>Paris SEO Jobs</strong></a></li>
             <li title="London SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/london"><strong>London SEO Jobs</strong></a></li>
+            <li title="Madrid SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/madrid"><strong>Madrid SEO Jobs</strong></a></li>
+            <li title="Barcelona SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/barcelona"><strong>Barcelona SEO Jobs</strong></a></li>
+            <li title="Leeds SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/leeds"><strong>Leeds SEO Jobs</strong></a></li>
             <li title="Berlin SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/berlin"><strong>Berlin SEO Jobs</strong></a></li>
             <li title="Amsterdam SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/amsterdam"><strong>Amsterdam SEO Jobs</strong></a></li>
-            <li title="Barcelona SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/barcelona"><strong>Barcelona SEO Jobs</strong></a></li>
-            <li title="Paris SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/paris"><strong>Paris SEO Jobs</strong></a></li>
-            <li title="Remote SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/remote"><strong>Remote SEO Jobs</strong></a></li>
+            <li title="Dusseldorf SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/dusseldorf"><strong>Dusseldorf SEO Jobs</strong></a></li>
+            <li title="Munich SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/munich"><strong>Munich SEO Jobs</strong></a></li>
+            <li title="Lyon SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/lyon"><strong>Lyon SEO Jobs</strong></a></li>
+            <li title="Hamburg SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/hamburg"><strong>Hamburg SEO Jobs</strong></a></li>
+            <li title="Kiev SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/kiev"><strong>Kiev SEO Jobs</strong></a></li>
+            <li title="Manchester SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/manchester"><strong>Manchester SEO Jobs</strong></a></li>
+            <li title="Warsaw SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/warsaw"><strong>Warsaw SEO Jobs</strong></a></li>
+            <li title="Stockholm SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/stockholm"><strong>Stockholm SEO Jobs</strong></a></li>
+            <li title="Birmingham SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/birmingham"><strong>Birmingham SEO Jobs</strong></a></li>
+            <li title="Lille SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/lille"><strong>Lille SEO Jobs</strong></a></li>
+            <li title="Vienna SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/vienna"><strong>Vienna SEO Jobs</strong></a></li>
+            <li title="Bristol SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/bristol"><strong>Bristol SEO Jobs</strong></a></li>
+            <li title="Sofia SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/sofia"><strong>Sofia SEO Jobs</strong></a></li>
+            <li title="Rotterdam SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/rotterdam"><strong>Rotterdam SEO Jobs</strong></a></li>
+            <li title="Essen SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/essen"><strong>Essen SEO Jobs</strong></a></li>
+            <li title="Copenhagen SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/copenhagen"><strong>Copenhagen SEO Jobs</strong></a></li>
+            <li title="Brussels SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/brussels"><strong>Brussels SEO Jobs</strong></a></li>
           </ul>
         </section>
         <section>
           <h3 style="margin-bottom: 0.5rem;">SEO Jobs by Tag</h3>
+          <p><strong>Find SEO jobs by specialization. On this job board you will not be harassed by marketing material & ads.</strong></p>
           <ul style="list-style: none; padding: 0; margin: 0;">
             <li title="Technical SEO Jobs"><a href="https://seo-vacancy.eu/jobs/tag/technical-seo"><strong>Technical SEO Jobs</strong></a></li>
             <li title="Enterprise SEO Jobs"><a href="https://seo-vacancy.eu/jobs/tag/enterprise-seo"><strong>Enterprise SEO Jobs</strong></a></li>
@@ -301,6 +322,9 @@ function generateJobHTML(job: any, baseUrl: string, requestedSlug: string): stri
             <li title="Analytics &amp; Data SEO Jobs"><a href="https://seo-vacancy.eu/jobs/tag/analytics-&-data-seo"><strong>Analytics &amp; Data SEO Jobs</strong></a></li>
           </ul>
         </section>
+      </div>
+      <div style="margin:1.5rem 0;text-align:center;">
+        <a href="https://seo-vacancy.eu/privacy-policy" style="color:#555;text-decoration:underline;">Privacy Policy</a>
       </div>
       <div style="text-align:center; margin-top: 2rem; font-size: 0.95rem; color: #888;">
         &copy; ${new Date().getFullYear()} SEO Vacancy Europe. All rights reserved.
