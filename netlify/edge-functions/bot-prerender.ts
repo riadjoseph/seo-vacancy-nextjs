@@ -334,10 +334,9 @@ async function querySupabase(url: string, key: string, query: string): Promise<a
 
 export default async (request: Request, context: Context) => {
   // Environment variables
-  const { env } = context;
-  const supabaseUrl = env.VITE_SUPABASE_URL;
-  const supabaseKey = env.VITE_SUPABASE_KEY;
-  const netlifyUrl = env.URL || 'https://seo-vacancy.eu';
+  const supabaseUrl = Netlify.env.get('VITE_SUPABASE_URL');
+  const supabaseKey = Netlify.env.get('VITE_SUPABASE_KEY');
+  const netlifyUrl = Netlify.env.get('URL') || 'https://seo-vacancy.eu';
 
   const url = new URL(request.url);
   const userAgent = request.headers.get('user-agent') || '';
