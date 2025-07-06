@@ -1,7 +1,8 @@
-// netlify/edge-functions/bot-prerender.ts
+
+import type { Context } from '@netlify/edge-functions';
 
 // In-memory deduplication map
-const pendingRequests = new Map<string, Promise<Response>>();
+const pendingRequests = new Map<string, { html: string; init: ResponseInit }>();
 
 // Cache for 410 URLs
 let cached410Urls: Set<string> | null = null;
@@ -331,7 +332,13 @@ async function querySupabase(url: string, key: string, query: string): Promise<a
   return response.json();
 }
 
-export default async (request: Request) => {
+export default async (request: Request, context: Context) => {
+  // Environment variables
+  const { env } = context;
+  const supabaseUrl = env.VITE_SUPABASE_URL;
+  const supabaseKey = env.VITE_SUPABASE_KEY;
+  const netlifyUrl = env.URL || 'https://seo-vacancy.eu';
+
   const url = new URL(request.url);
   const userAgent = request.headers.get('user-agent') || '';
   const jobSlug = url.pathname.replace('/job/', '');
@@ -348,11 +355,6 @@ export default async (request: Request) => {
   }
 
   console.log(`🤖 Bot detected visiting job page`);
-
-  // Environment variables
-  const supabaseUrl = Deno.env.get('VITE_SUPABASE_URL');
-  const supabaseKey = Deno.env.get('VITE_SUPABASE_KEY');
-  const netlifyUrl = Deno.env.get('URL') || 'https://seo-vacancy.eu';
 
   if (!supabaseUrl || !supabaseKey) {
     console.log(`❌ Missing Supabase credentials`);
@@ -382,11 +384,11 @@ export default async (request: Request) => {
     });
   }
 
-  // Deduplication: serve existing promise if present
+  // Deduplication: serve existing result if present
   if (pendingRequests.has(cacheKey)) {
     console.log(`⚡ Deduplicating concurrent request for: ${cacheKey}`);
-    const cachedResponse = await pendingRequests.get(cacheKey);
-    return cachedResponse?.clone();
+    const { html, init } = pendingRequests.get(cacheKey)!;
+    return new Response(html, init);
   }
 
   // Set up async handler for this request
@@ -465,7 +467,7 @@ export default async (request: Request) => {
       
       console.log(`💾 Cache duration: ${cacheDuration}s (expires: ${job.expires_at || 'unknown'})`);
       
-      return new Response(html, {
+      const init: ResponseInit = {
         status: 200,
         headers: {
           'Content-Type': 'text/html',
@@ -476,7 +478,11 @@ export default async (request: Request) => {
           'Vary': 'User-Agent',
           ...cacheHeaders
         }
-      });
+      };
+      // Cache raw HTML and init for deduplication
+      pendingRequests.set(cacheKey, { html, init });
+      setTimeout(() => pendingRequests.delete(cacheKey), 1000);
+      return new Response(html, init);
 
     } catch (error) {
       console.log(`❌ Error in edge function: ${error.message}`);
@@ -486,10 +492,6 @@ export default async (request: Request) => {
       });
     }
   })();
-
-  // Store promise and clean up
-  pendingRequests.set(cacheKey, requestPromise);
-  setTimeout(() => pendingRequests.delete(cacheKey), 1000);
 
   return requestPromise;
 };

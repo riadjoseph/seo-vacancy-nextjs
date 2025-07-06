@@ -9,6 +9,11 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["deno.ns", "@netlify/edge-functions"],
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
     "noImplicitAny": false,
     "noUnusedParameters": false,
     "skipLibCheck": true,
