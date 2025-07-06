@@ -135,7 +135,7 @@ function generateBreadcrumbHtml(job: any, baseUrl: string, jobSlug: string): str
   return `
 <nav aria-label="Breadcrumb">
   <ol>
-    <li><a href="${baseUrl}">Jobs</a></li>
+    <li><a href="${baseUrl}">Europe SEO Jobs</a></li>
     <li><a href="${baseUrl}/jobs/city/${encodeURIComponent(city.toLowerCase())}">SEO Jobs in ${city}</a></li>
     <li aria-current="page">${fullTitle}</li>
   </ol>
@@ -187,8 +187,8 @@ function generateJobHTML(job: any, baseUrl: string, requestedSlug: string): stri
     `${title} position available. Apply now!`;
   
   const salaryRange = job.salary_min && job.salary_max ? 
-    `€${job.salary_min.toLocaleString()} - €${job.salary_max.toLocaleString()}` : 
-    'Competitive salary';
+     `€${job.salary_min.toLocaleString()} - €${job.salary_max.toLocaleString()}` : 
+     'Competitive salary';
 
   // Use the requested URL slug directly (no generation needed!)
   const canonicalSlug = requestedSlug;
@@ -253,7 +253,7 @@ function generateJobHTML(job: any, baseUrl: string, requestedSlug: string): stri
                 <div class="job-meta">
                     <p><strong>Company:</strong> ${companyName}</p>
                     <p><strong>Location:</strong> ${location}</p>
-                    <p><strong>Salary:</strong> ${salaryRange}</p>
+                    <!-- <p><strong>Salary:</strong> ${salaryRange}</p> -->
                     ${job.job_type ? `<p><strong>Type:</strong> ${sanitizeForHTML(job.job_type)}</p>` : ''}
                 </div>
             </header>
@@ -271,13 +271,41 @@ function generateJobHTML(job: any, baseUrl: string, requestedSlug: string): stri
             ` : ''}
             
             <section class="application">
-                <h2>How to Apply</h2>
-                <p>This position is available for applications. Visit our main site to apply.</p>
+                <h2>Apply</h2>
+                <p>This position is available for applications on the company website.</p>
                 ${job.job_url ? `<a href="${sanitizeForHTML(job.job_url)}" target="_blank" rel="noopener">Apply Now</a>` : ''}
             </section>
         </article>
     </main>
-    
+    <footer style="margin-top: 3rem; padding: 2rem 0; background: #f8f8f8;">
+      <div style="max-width: 900px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 2rem; justify-content: space-between;">
+        <section>
+          <h3 style="margin-bottom: 0.5rem;">SEO Jobs by City</h3>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li title="London SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/london"><strong>London SEO Jobs</strong></a></li>
+            <li title="Berlin SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/berlin"><strong>Berlin SEO Jobs</strong></a></li>
+            <li title="Amsterdam SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/amsterdam"><strong>Amsterdam SEO Jobs</strong></a></li>
+            <li title="Barcelona SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/barcelona"><strong>Barcelona SEO Jobs</strong></a></li>
+            <li title="Paris SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/paris"><strong>Paris SEO Jobs</strong></a></li>
+            <li title="Remote SEO Jobs"><a href="https://seo-vacancy.eu/jobs/city/remote"><strong>Remote SEO Jobs</strong></a></li>
+          </ul>
+        </section>
+        <section>
+          <h3 style="margin-bottom: 0.5rem;">SEO Jobs by Tag</h3>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li title="Technical SEO Jobs"><a href="https://seo-vacancy.eu/jobs/tag/technical-seo"><strong>Technical SEO Jobs</strong></a></li>
+            <li title="Enterprise SEO Jobs"><a href="https://seo-vacancy.eu/jobs/tag/enterprise-seo"><strong>Enterprise SEO Jobs</strong></a></li>
+            <li title="SEO Strategy &amp; Management Jobs"><a href="https://seo-vacancy.eu/jobs/tag/seo-strategy-&-management"><strong>SEO Strategy &amp; Management Jobs</strong></a></li>
+            <li title="International SEO Jobs"><a href="https://seo-vacancy.eu/jobs/tag/international-seo"><strong>International SEO Jobs</strong></a></li>
+            <li title="Content SEO Jobs"><a href="https://seo-vacancy.eu/jobs/tag/content-seo"><strong>Content SEO Jobs</strong></a></li>
+            <li title="Analytics &amp; Data SEO Jobs"><a href="https://seo-vacancy.eu/jobs/tag/analytics-&-data-seo"><strong>Analytics &amp; Data SEO Jobs</strong></a></li>
+          </ul>
+        </section>
+      </div>
+      <div style="text-align:center; margin-top: 2rem; font-size: 0.95rem; color: #888;">
+        &copy; ${new Date().getFullYear()} SEO Vacancy Europe. All rights reserved.
+      </div>
+    </footer>
     <img src="${baseUrl}/.netlify/functions/track-bot-visit?job=${encodeURIComponent(canonicalSlug)}&bot=true&prerendered=true&timestamp=${Date.now()}" width="1" height="1" style="display:none;" alt="tracking" loading="eager">
 </body>
 </html>`;
