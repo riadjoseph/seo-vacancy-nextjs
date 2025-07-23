@@ -3,21 +3,24 @@ import { initGA, usePageTracking } from '@/utils/analytics';
 
 const MEASUREMENT_ID = 'G-4S7FY23V18'; // Replace with your GA4 measurement ID
 
-const Analytics = ({ enable }: { enable: boolean }) => {
+const Analytics = () => {
   usePageTracking();
 
   useEffect(() => {
-    if (enable) {
-      // Dynamically import posthog only if consent is given
-      import('posthog-js').then(posthog => {
-        posthog.default.init('phc_soH2FL1IO9Vzof8zMGv1FHyz4eIFdyuiKcMxUC9oerO', {
-          api_host: 'https://eu.i.posthog.com',
-          person_profiles: 'identified_only',
-        });
+    // Initialize PostHog for cookieless tracking
+    import('posthog-js').then(posthog => {
+      posthog.default.init('phc_soH2FL1IO9Vzof8zMGv1FHyz4eIFdyuiKcMxUC9oerO', {
+        api_host: 'https://eu.i.posthog.com',
+        person_profiles: 'identified_only',
+        disable_cookie: true, // Disable cookies
+        disable_session_recording: false,
+        disable_persistence: true, // Disable local storage persistence
       });
-      initGA(MEASUREMENT_ID);
-    }
-  }, [enable]);
+    });
+    
+    // Initialize GA4 for cookieless tracking
+    initGA(MEASUREMENT_ID);
+  }, []);
 
   return null;
 };

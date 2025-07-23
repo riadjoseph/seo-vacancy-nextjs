@@ -20,7 +20,12 @@ export const initGA = (measurementId: string) => {
     window.dataLayer.push(arguments);
   };
   window.gtag('js', new Date());
-  window.gtag('config', measurementId);
+  window.gtag('config', measurementId, {
+    cookie_flags: 'max-age=7200;secure;samesite=none',
+    anonymize_ip: true,
+    allow_google_signals: false,
+    allow_ad_personalization_signals: false,
+  });
 };
 
 // Custom event tracking

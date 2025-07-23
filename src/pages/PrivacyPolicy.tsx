@@ -21,7 +21,7 @@ const PrivacyPolicy = () => {
       </p>
       <h2 className="text-2xl font-semibold mb-2">Data Security</h2>
       <p className="mb-4">
-        We take reasonable measures to protect your information from unauthorized access, use, or disclosure. We use Google Analytics and occasianally PostHog to analyze website traffic and improve our services. These tools may collect information such as your IP address, browser type, and pages visited, only when you click Accept on the Cookie Consent Banner. The tracking is fired only after you accept the cookie consent banner. You can opt out of Google Analytics by installing the Google Analytics Opt-out Browser Add-on. The tracking does not collect any personally identifiable information unless you provide it to us directly, such as when you post a job opening or contact us via email.
+        We take reasonable measures to protect your information from unauthorized access, use, or disclosure. We use Google Analytics and PostHog to analyze website traffic and improve our services. These tools collect anonymized information such as your IP address (anonymized), browser type, and pages visited without storing cookies or personally identifiable information on your device. The tracking is privacy-focused and does not require consent. You can opt out of Google Analytics by installing the Google Analytics Opt-out Browser Add-on. The tracking does not collect any personally identifiable information unless you provide it to us directly, such as when you post a job opening or contact us via email.
       </p>
       <h2 className="text-2xl font-semibold mb-2">Changes to This Privacy Policy</h2>
       <p className="mb-4">
