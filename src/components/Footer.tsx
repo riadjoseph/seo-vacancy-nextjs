@@ -3,17 +3,17 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   const totalJobs = 529; //  total jobs count, replace with actual data
-  const dateUpdated = "22 July 2025"; //  date, replace with actual data
+  const dateUpdated = "11 Aug 2025"; //  date, replace with actual data
   const topCities = [
-    { name: "London", count: 36 },
-    { name: "Madrid", count: 32 },
-    { name: "Paris", count: 29 },
+    { name: "London", count: 38 },
+    { name: "Madrid", count: 25 },
+    { name: "Berlin", count: 20 },
   ];
 
   const topTags = [
-    { name: "Technical SEO", count: 174 },
-    { name: "Enterprise SEO", count: 172 },
-    { name: "SEO Strategy & Management", count: 161 },
+    { name: "Technical SEO", count: 145 },
+    { name: "Enterprise SEO", count: 124 },
+    { name: "SEO Strategy & Management", count: 143 },
   ];
 
   return (

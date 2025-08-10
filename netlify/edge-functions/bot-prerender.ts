@@ -352,7 +352,7 @@ function generate410HTML(path: string, baseUrl: string): string {
       <div class="text-center space-y-6">
         <div class="space-y-4">
           <h1 class="text-4xl font-bold text-gray-900">That Job is No Longer Available</h1>
-          <p class="text-xl text-gray-600">This job posting has been removed or has expired.</p>
+          <p class="text-xl text-gray-600">This position has been filled.</p>
         </div>
         <div class="flex justify-center gap-4 mt-8">
           <a class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors" href="${baseUrl}">Browse Current SEO Jobs</a>
