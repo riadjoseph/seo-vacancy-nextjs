@@ -70,7 +70,7 @@ function LoadingSkeleton() {
 
 export default function Home() {
   return (
-    <main className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4">
       <div className="mb-12 text-center">
         <h1 className="text-4xl font-bold mb-4">
           Find Your Next SEO & Tech Career
@@ -83,6 +83,6 @@ export default function Home() {
       <Suspense fallback={<LoadingSkeleton />}>
         <JobsList />
       </Suspense>
-    </main>
+    </div>
   )
 }

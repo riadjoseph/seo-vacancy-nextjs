@@ -5,7 +5,7 @@ import { Search, ArrowLeft } from 'lucide-react'
 
 export default function NotFound() {
   return (
-    <main className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4">
       <div className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800">
           <ArrowLeft className="h-4 w-4" />
@@ -30,6 +30,6 @@ export default function NotFound() {
           </div>
         </CardContent>
       </Card>
-    </main>
+    </div>
   )
 }

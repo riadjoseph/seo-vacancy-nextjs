@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+// import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { Suspense } from 'react'
@@ -137,7 +137,7 @@ export default async function CityJobsPage({ params }: CityJobsPageProps) {
   const decodedCity = decodeURIComponent(city)
   
   return (
-    <main className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4">
       <div className="mb-6">
         <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800">
           <ArrowLeft className="h-4 w-4" />
@@ -160,6 +160,6 @@ export default async function CityJobsPage({ params }: CityJobsPageProps) {
       <Suspense fallback={<LoadingSkeleton />}>
         <CityJobsList city={city} />
       </Suspense>
-    </main>
+    </div>
   )
 }

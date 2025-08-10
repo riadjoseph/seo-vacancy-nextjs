@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Search, Filter } from 'lucide-react'
+import { Search } from 'lucide-react'
 
 interface SearchSectionProps {
   onSearch?: (query: string) => void
