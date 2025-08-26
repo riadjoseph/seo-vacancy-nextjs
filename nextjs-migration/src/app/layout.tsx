@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from '@/lib/providers';
 import { Navigation, Footer } from '@/components/Navigation';
+import { Analytics } from '@/lib/analytics';
+import { Toaster } from 'sonner';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Job Board - Find Your Next SEO & Tech Career",
-  description: "Discover the latest SEO, marketing, and tech job opportunities across Europe",
+  title: "Wake Up Happy - Find Your Next SEO & Tech Career",
+  description: "Wake up to new opportunities! Discover the latest SEO, marketing, and tech job opportunities across Europe",
 };
 
 export default function RootLayout({
@@ -37,6 +39,8 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <Analytics />
+          <Toaster />
         </Providers>
       </body>
     </html>

@@ -35,3 +35,8 @@ export const SEO_SPECIALIZATIONS = [
 ] as const;
 
 export type SeoSpecialization = typeof SEO_SPECIALIZATIONS[number];
+
+export interface SeoSpecializationOption {
+  value: string;
+  label: string;
+}

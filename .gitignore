@@ -2,3 +2,5 @@
 .env
 /dist
 /CLAUDE.md
+/migration.md
+/nextjs-migration-progress.md

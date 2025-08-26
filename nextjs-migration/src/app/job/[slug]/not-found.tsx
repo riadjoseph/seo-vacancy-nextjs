@@ -18,7 +18,7 @@ export default function NotFound() {
           <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Job Not Found</h1>
           <p className="text-gray-600 mb-6">
-            The job you&apos;re looking for doesn&apos;t exist or may have been removed.
+            The job you're looking for doesn't exist or may have been removed.
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/">

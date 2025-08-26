@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import Link from 'next/link'
+import ReactMarkdown from 'react-markdown'
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -11,9 +12,9 @@ import {
   Calendar, 
   ExternalLink, 
   ArrowLeft,
-  Building2,
-  Clock
+  Building2
 } from 'lucide-react'
+import { createTagSlug } from '@/utils/tagUtils'
 import type { Tables } from '@/lib/supabase/types'
 
 type Job = Tables<'jobs'>
@@ -83,33 +84,11 @@ export default async function JobPage({ params }: JobPageProps) {
     notFound()
   }
   
-  // Check if job is expired
-  const isExpired = new Date(job.expires_at) < new Date()
+  // Check if job is expired - return 404 for expired jobs
+  const isExpired = job.expires_at && new Date(job.expires_at) < new Date()
   
   if (isExpired) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="mb-6">
-          <Link href="/" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Jobs
-          </Link>
-        </div>
-        
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="p-8 text-center">
-            <Clock className="h-12 w-12 text-red-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-red-800 mb-2">Job Expired</h1>
-            <p className="text-red-600">This job posting has expired and is no longer accepting applications.</p>
-            <div className="mt-4">
-              <Link href="/">
-                <Button variant="outline">Browse Current Jobs</Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
+    notFound()
   }
   
   return (
@@ -126,11 +105,20 @@ export default async function JobPage({ params }: JobPageProps) {
           <Card>
             <CardHeader>
               <div className="flex justify-between items-start gap-4">
-                <div>
-                  <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
-                  <div className="flex items-center gap-2 text-xl text-gray-600">
-                    <Building2 className="h-5 w-5" />
-                    <span>{job.company_name}</span>
+                <div className="flex gap-4 flex-1">
+                  {job.company_logo && job.company_logo.trim() && job.company_logo !== "'" && (
+                    <img 
+                      src={job.company_logo} 
+                      alt={job.company_name}
+                      className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h1 className="text-3xl font-bold mb-2">{job.title}</h1>
+                    <div className="flex items-center gap-2 text-xl text-gray-600">
+                      <Building2 className="h-5 w-5" />
+                      <span>{job.company_name}</span>
+                    </div>
                   </div>
                 </div>
                 {job.featured && (
@@ -147,14 +135,16 @@ export default async function JobPage({ params }: JobPageProps) {
                     <span>{job.city}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-1">
-                  <Briefcase className="h-4 w-4" />
-                  <span>{job.category}</span>
-                </div>
+                {job.category && job.category !== 'FULL_TIME' && (
+                  <div className="flex items-center gap-1">
+                    <Briefcase className="h-4 w-4" />
+                    <span>{job.category}</span>
+                  </div>
+                )}
                 {job.created_at && (
                   <div className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
-                    <span>Posted {new Date(job.created_at).toLocaleDateString()}</span>
+                    <span suppressHydrationWarning>Posted {new Date(job.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
                   </div>
                 )}
               </div>
@@ -166,12 +156,11 @@ export default async function JobPage({ params }: JobPageProps) {
               <h2 className="text-xl font-semibold">Job Description</h2>
             </CardHeader>
             <CardContent>
-              <div 
-                className="prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ 
-                  __html: job.description || 'No description available.' 
-                }}
-              />
+              <div className="prose prose-sm max-w-none whitespace-pre-line">
+                <ReactMarkdown>
+                  {job.description || 'No description available.'}
+                </ReactMarkdown>
+              </div>
             </CardContent>
           </Card>
           
@@ -183,9 +172,11 @@ export default async function JobPage({ params }: JobPageProps) {
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {job.tags.map((tag, index) => (
-                    <Badge key={index} variant="secondary">
-                      {tag}
-                    </Badge>
+                    <Link key={index} href={`/jobs/tag/${createTagSlug(tag)}`}>
+                      <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 hover:text-blue-900 cursor-pointer transition-colors border-0">
+                        {tag}
+                      </Badge>
+                    </Link>
                   ))}
                 </div>
               </CardContent>
@@ -213,7 +204,7 @@ export default async function JobPage({ params }: JobPageProps) {
               
               {job.expires_at && (
                 <p className="text-sm text-gray-500 text-center">
-                  Application deadline: {new Date(job.expires_at).toLocaleDateString()}
+                  <span suppressHydrationWarning>Application deadline: {new Date(job.expires_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
                 </p>
               )}
             </CardContent>
@@ -230,14 +221,16 @@ export default async function JobPage({ params }: JobPageProps) {
                   <span className="font-medium">{job.city}</span>
                 </div>
               )}
-              <div className="flex justify-between">
-                <span className="text-gray-600">Category:</span>
-                <span className="font-medium">{job.category}</span>
-              </div>
+              {job.category && job.category !== 'FULL_TIME' && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Category:</span>
+                  <span className="font-medium">{job.category}</span>
+                </div>
+              )}
               {job.created_at && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Posted:</span>
-                  <span className="font-medium">{new Date(job.created_at).toLocaleDateString()}</span>
+                  <span className="font-medium" suppressHydrationWarning>{new Date(job.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
                 </div>
               )}
             </CardContent>

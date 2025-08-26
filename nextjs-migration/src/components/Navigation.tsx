@@ -1,15 +1,21 @@
+'use client'
+
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Briefcase, Search } from 'lucide-react'
+import { Search, User, LogOut } from 'lucide-react'
+import { SunshineIcon } from '@/components/ui/sunshine-icon'
+import { useAuth } from '@/lib/auth-context'
 
 export function Navigation() {
+  const { user, loading, signOut } = useAuth()
+  
   return (
     <nav className="border-b bg-white">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-            <Briefcase className="h-6 w-6" />
-            <span>Job Board</span>
+            <SunshineIcon className="h-6 w-6 text-yellow-500" />
+            <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Wake Up Happy</span>
           </Link>
           
           <div className="hidden md:flex items-center space-x-6">
@@ -26,14 +32,48 @@ export function Navigation() {
               <Search className="h-4 w-4" />
               Search
             </Link>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm">
-                Sign In
-              </Button>
-              <Button size="sm">
-                Post Job
-              </Button>
-            </div>
+            
+            {!loading && (
+              <div className="flex items-center gap-2">
+                {user ? (
+                  <>
+                    <Link href="/my-jobs">
+                      <Button variant="outline" size="sm" className="gap-1">
+                        <User className="h-4 w-4" />
+                        My Jobs
+                      </Button>
+                    </Link>
+                    <Link href="/post-job">
+                      <Button size="sm">
+                        Post Job
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={signOut}
+                      className="gap-1"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/auth/magic-link">
+                      <Button variant="outline" size="sm">
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link href="/auth/magic-link">
+                      <Button size="sm">
+                        Post Job
+                      </Button>
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -48,8 +88,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 font-bold text-xl text-white mb-4">
-              <Briefcase className="h-6 w-6" />
-              <span>Job Board</span>
+              <SunshineIcon className="h-6 w-6 text-yellow-400" />
+              <span>Wake Up Happy</span>
             </div>
             <p className="text-sm text-gray-400">
               Find your next SEO and tech career opportunity across Europe.
@@ -88,7 +128,7 @@ export function Footer() {
         </div>
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-          <p>&copy; 2025 Job Board. All rights reserved.</p>
+          <p>&copy; 2025 Wake Up Happy. All rights reserved.</p>
         </div>
       </div>
     </footer>

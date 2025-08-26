@@ -2,25 +2,51 @@ import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { JobCard } from '@/components/JobCard'
 import { JobCardSkeleton } from '@/components/JobCardSkeleton'
+import { AdvancedSearch } from '@/components/AdvancedSearch'
 
-async function JobsList() {
+interface JobsListProps {
+  searchParams: {
+    q?: string
+    category?: string
+    city?: string
+    tags?: string[]
+  }
+}
+
+async function JobsList({ searchParams }: JobsListProps) {
   const supabase = await createClient()
   
-  const { data: jobs, error } = await supabase
+  let query = supabase
     .from('jobs')
     .select('*')
     .order('featured', { ascending: false })
     .order('created_at', { ascending: false })
-    .limit(20)
+    .limit(50)
 
-  if (error) {
-    console.error('Error fetching jobs:', error)
-    return (
-      <div className="text-center py-12">
-        <p className="text-red-500 text-lg">Failed to load jobs. Please try again later.</p>
-      </div>
-    )
+  // Filter out expired jobs
+  const currentDate = new Date().toISOString()
+  query = query.or(`expires_at.is.null,expires_at.gte.${currentDate}`)
+
+  // Apply filters based on search params
+  if (searchParams.q) {
+    const searchTerm = searchParams.q.trim()
+    query = query.or(`title.ilike.%${searchTerm}%,company_name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,category.ilike.%${searchTerm}%`)
   }
+  
+  if (searchParams.category) {
+    query = query.eq('category', searchParams.category)
+  }
+  
+  if (searchParams.city) {
+    query = query.eq('city', searchParams.city)
+  }
+  
+  if (searchParams.tags && searchParams.tags.length > 0) {
+    const tags = Array.isArray(searchParams.tags) ? searchParams.tags : [searchParams.tags]
+    query = query.contains('tags', tags)
+  }
+
+  const { data: jobs, error } = await query
 
   if (!jobs?.length) {
     return (
@@ -40,7 +66,7 @@ async function JobsList() {
           <h2 className="text-2xl font-bold mb-6">Featured Jobs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {featuredJobs.map((job) => (
-              <JobCard key={job.id} job={job} />
+              <JobCard key={job.id} job={job} isFeatured={true} />
             ))}
           </div>
         </div>
@@ -68,20 +94,38 @@ function LoadingSkeleton() {
   )
 }
 
-export default function Home() {
+interface HomeProps {
+  searchParams: Promise<{
+    q?: string
+    category?: string
+    city?: string
+    tags?: string | string[]
+  }>
+}
+
+export default async function Home({ searchParams }: HomeProps) {
+  const params = await searchParams
+  // Normalize tags to always be an array
+  const normalizedSearchParams = {
+    ...params,
+    tags: params.tags ? (Array.isArray(params.tags) ? params.tags : [params.tags]) : undefined
+  }
+
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="mb-12 text-center">
-        <h1 className="text-4xl font-bold mb-4">
-          Find Your Next SEO & Tech Career
+      <div className="mb-8 text-center">
+        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
+          Wake Up To Your Dream Career
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Discover the latest SEO, marketing, and tech job opportunities across Europe
+          Start each day with excitement! Discover the latest SEO, marketing, and tech job opportunities across Europe
         </p>
       </div>
 
+      <AdvancedSearch />
+
       <Suspense fallback={<LoadingSkeleton />}>
-        <JobsList />
+        <JobsList searchParams={normalizedSearchParams} />
       </Suspense>
     </div>
   )
