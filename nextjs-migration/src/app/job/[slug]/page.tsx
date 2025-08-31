@@ -17,11 +17,17 @@ import {
 import { createTagSlug } from '@/utils/tagUtils'
 import type { Tables } from '@/lib/supabase/types'
 
+// Route Segment Config - 30 day revalidation for job details
+export const revalidate = 2592000 // 30 days
+
 type Job = Tables<'jobs'>
 
 interface JobPageProps {
   params: Promise<{
     slug: string
+  }>
+  searchParams?: Promise<{
+    cache?: string
   }>
 }
 
@@ -76,8 +82,17 @@ export async function generateMetadata({ params }: JobPageProps): Promise<Metada
   }
 }
 
-export default async function JobPage({ params }: JobPageProps) {
+export default async function JobPage({ params, searchParams }: JobPageProps) {
   const { slug } = await params
+  const searchParamsResolved = searchParams ? await searchParams : {}
+  
+  // Check for cache purge parameter
+  if (searchParamsResolved.cache === 'purge') {
+    // Redirect to cache purge API with redirect URL
+    const { redirect } = await import('next/navigation')
+    redirect(`/api/cache-purge/job/${slug}?redirect=${encodeURIComponent(`/job/${slug}`)}`)
+  }
+  
   const job = await getJobBySlug(slug)
   
   if (!job) {
@@ -132,7 +147,9 @@ export default async function JobPage({ params }: JobPageProps) {
                 {job.city && (
                   <div className="flex items-center gap-1">
                     <MapPin className="h-4 w-4" />
-                    <span>{job.city}</span>
+                    <Link href={`/jobs/city/${job.city.toLowerCase()}`} className="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
+                      {job.city}
+                    </Link>
                   </div>
                 )}
                 {job.category && job.category !== 'FULL_TIME' && (
@@ -218,7 +235,9 @@ export default async function JobPage({ params }: JobPageProps) {
               {job.city && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">Location:</span>
-                  <span className="font-medium">{job.city}</span>
+                  <Link href={`/jobs/city/${job.city.toLowerCase()}`} className="font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors">
+                    {job.city}
+                  </Link>
                 </div>
               )}
               {job.category && job.category !== 'FULL_TIME' && (

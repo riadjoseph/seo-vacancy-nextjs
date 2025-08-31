@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { ExternalLink, MapPin, Briefcase, Calendar } from 'lucide-react'
+import { MapPin, Briefcase, Calendar } from 'lucide-react'
 import { createTagSlug } from '@/utils/tagUtils'
 import type { Tables } from '@/lib/supabase/types'
 
@@ -66,7 +66,9 @@ export function JobCard({ job, isFeatured = false }: JobCardProps) {
           {job.city && (
             <div className="flex items-center gap-1">
               <MapPin className="h-4 w-4" />
-              <span>{job.city}</span>
+              <Link href={`/jobs/city/${job.city.toLowerCase()}`} className="text-blue-600 hover:text-blue-800 hover:underline transition-colors">
+                {job.city}
+              </Link>
             </div>
           )}
           {job.category && job.category !== 'FULL_TIME' && (
@@ -106,23 +108,12 @@ export function JobCard({ job, isFeatured = false }: JobCardProps) {
           </div>
         )}
 
-        <div className="flex justify-between items-center pt-2">
+        <div className="flex justify-start items-center pt-2">
           <Link href={`/job/${slug}`}>
             <Button variant="outline" size="sm">
               View Details
             </Button>
           </Link>
-          <a
-            href={job.job_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex"
-          >
-            <Button size="sm" className="gap-1">
-              Apply
-              <ExternalLink className="h-3 w-3" />
-            </Button>
-          </a>
         </div>
       </CardContent>
     </Card>

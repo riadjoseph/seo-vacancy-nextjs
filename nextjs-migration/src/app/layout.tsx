@@ -5,6 +5,7 @@ import { Providers } from '@/lib/providers';
 import { Navigation, Footer } from '@/components/Navigation';
 import { Analytics } from '@/lib/analytics';
 import { Toaster } from 'sonner';
+import { BuyMeACoffeeWidget } from '@/components/BuyMeACoffee';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,11 @@ export default function RootLayout({
           </div>
           <Analytics />
           <Toaster />
+          <BuyMeACoffeeWidget 
+            description="Support WakeUpHappy - Keep it ad-free!" 
+            message="" 
+            color="#5F7FFF"
+          />
         </Providers>
       </body>
     </html>
